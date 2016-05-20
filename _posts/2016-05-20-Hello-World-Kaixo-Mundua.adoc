@@ -1,0 +1,3 @@
+# Hello World! Kaixo Mundua!
+
+This is the first post of my GSoC2016 blog. I will be updating soon, stay tunned! 
