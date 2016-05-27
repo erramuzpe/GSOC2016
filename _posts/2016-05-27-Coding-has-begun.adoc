@@ -1,0 +1,12 @@
+# Coding has begun
+
+
+This has been the first week of coding of the program, I hope this summer to be a great learning period!
+
+With respecto to the Bonding Period, my mentor [Chris Gorgolewsky](https://github.com/chrisfilo) created some milestones for the project to be completed. We agreed on starting from the basic task of populating the project's database automatically. This took not much time, but minor bugs and details related to the main population made me to spend a longer period on this. Anyway, it was positive, since I am now much more familiarized with the project's structure, which was the goal for this period. I also solved some other minor issues and studied about ANN search libraries and how to approach the project's main objective.
+
+For this week, I was intended to prepare some benchmarks to test the different search engines we are using. I found a [great benchmark](https://github.com/erikbern/ann-benchmarks) that tests different ANN searching libraries, but we will still need to benchmark the present implementation. I've been playing around with some data and [pybraincompare tools](https://github.com/vsoch/pybraincompare), the present package used for image comparison and treatment in Neurovault developed by [@vsochat](https://github.com/vsoch). 
+
+I also started thinking about a feature extraction protocol and I've been reading about how to accomplish this. I found an [interesting paper](https://www.google.es/url?sa=t&rct=j&q=&esrc=s&source=web&cd=3&cad=rja&uact=8&ved=0ahUKEwiQz5SigfjMAhWGNxQKHU81AiEQFggxMAI&url=http%3A%2F%2Fwww.omicsonline.com%2Fopen-access%2Fa-similarity-retrieval-tool-for-functional-magnetic-resonance-imaging-statistical-maps-2090-4924-2-103.pdf&usg=AFQjCNHKJbuHEO0xsxC2lgaj9yiLTzW8-Q&sig2=TJ3krts0QC22zybsFa92zg) proposing a cluster-based technique (I will discuss this with the mentor). I downloaded the whole Neurovault's db and started to get myself familiar with handling of statistic maps, data extraction with nibabel and pybraincompare capabilities. The mentor and I will meet today to plan better what to do in the following days and to solve some questions I've been encountering with regard to data handling and similarity calculation. 
+
+
