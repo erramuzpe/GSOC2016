@@ -1,0 +1,44 @@
+# Benchmarking
+
+This week I've been developing a simple benchmark to test how much time the actual implementation of indexing and querying the database was taking. Firstly, I downloaded all the unthresholded images available at the momment in Neurovault (5015) to test the benchmark with real data. I made use of the code from link:http://code.activestate.com/recipes/577896-benchmark-code-with-the-with-statement/[this post] to retrieve the time each sentence/function was taking. All the results reported in this post depend, obviously, on the machine they are being executed. This is the Class used for the benchmark:
+
+`import gc
+import timeit
+class Timer:
+     def __init__(self, timer=None, disable_gc=False, verbose=True):
+         if timer is None:
+             timer = timeit.default_timer
+         self.timer = timer
+         self.disable_gc = disable_gc
+         self.verbose = verbose
+         self.start = self.end = self.interval = None
+     def __enter__(self):
+         if self.disable_gc:
+             self.gc_state = gc.isenabled()
+             gc.disable()
+         self.start = self.timer()
+         return self
+     def __exit__(self, *args):
+         self.end = self.timer()
+         if self.disable_gc and self.gc_state:
+             gc.enable()
+         self.interval = self.end - self.start
+         if self.verbose:
+             print('time taken: %f seconds' % self.interval)`        
+
+ 
+I made a pair of plots to represent the time that actual implementation takes. I have tested both functions with the server performing no task and several tasks. The first one shows the amount of time that the indexing takes. As the actual implementation is a one to one (paired) calculation, each time an Image is added the comparison value has to be calculated for every one of the pairs, making it computationally quite expensive to escalate (70 seconds for an indexing operation with a 5000 image database is expensive to maintain).
+
+image:https://cloud.githubusercontent.com/assets/6176948/15671549/a8a5b350-272b-11e6-94f3-1742dc2d05f6.png[]
+
+In the other hand, the query benchmark resulted in a very efficient result: 
+ 
+image:https://cloud.githubusercontent.com/assets/6176948/15717964/880133aa-2829-11e6-9b46-ec7b68c04579.png[]
+
+Fractions of a second for a big amount of images is a quite good results. This second benchmark was done in a machine with an SSD unit, compared to the first one made over a normal HD. I know that these are not comparable measures, but these figures allow us to understand which are the magnitudes we are dealing with and to see how the functions escalate with real data. 
+
+Our goal for this summer is to beat the indexing times with a big margin and to try to approximate the good results of the queries.
+
+To sum up, this week I coded some benchmarks to test how much time does with the actual implementation take to index and query the database. Then, I integrated them in a single command that can be executed from the Neurovault's shell.
+For the next week I will validate the benchmark results with the mentor and try to set up a proper feature extraction protocol.
+
