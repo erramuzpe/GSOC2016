@@ -32,12 +32,11 @@ With respecto to ANN libraries, I installed and tested link:https://github.com/p
 Here, I show a toy-benchmark of Nearpy (I have built the engine with binary projections of size 20 and 10 hashes):
 
 
-link:https://gist.github.com/erramuzpe/a1fc301e7466ffef85f9e3b5a41c3d2f[Results from queries]: they can be tested manually in Neurovault using the neurovault.org/images/_number_/ adress. For example, after querying link:http://neurovault.org/images/163/[this image] the Engine gives link:http://neurovault.org/images/8722/[this image] as result, which is *PRETTY IMPRESSIVE*.
+link:https://gist.github.com/erramuzpe/a1fc301e7466ffef85f9e3b5a41c3d2f[Results from queries]: they can be tested manually in Neurovault using the neurovault.org/images/_number_/ adress. For example, after querying link:http://neurovault.org/images/163/[this image] the Engine gives link:http://neurovault.org/images/8722/[this image] as result, which is *PRETTY IMPRESSIVE*, taking into account that I've done no effort to optimize the Engine and the distance used (Euclidean) needs of a regularization of the data (after performing it, probably results would be better).
 
 Results are not "complete". It gives just the ones that are closer, but not the rest. This results must be taken carefully, as they are just a toy-bench, not real data, not real results and not tested if results are accurate or just random. But it is useful to give an idea of the scale and magnitudes we are talking about. I am super-impressed by the bench results (and Nearpy was one of the worst ANN libraries in the global bench...).
 
-Benchmark:
-
+Benchmark plot:
 image:https://cloud.githubusercontent.com/assets/6176948/15960893/4688e14a-2f02-11e6-90b9-e5993af8b08c.png[]
 
 
