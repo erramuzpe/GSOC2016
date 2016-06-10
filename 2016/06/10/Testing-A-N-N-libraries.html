@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Testing ANN libraries</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="//erramuzpe.github.io/gsoc2016/themes/Casper/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="//erramuzpe.github.io/gsoc2016/themes/Casper/assets/css/screen.css?v=1.0.0" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+
+    <link rel="canonical" href="https://erramuzpe.github.io/gsoc2016/2016/06/10/Testing-A-N-N-libraries.html" />
+    
+    <meta property="og:site_name" content="Neurovault: Image Search for Brain Maps" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Testing ANN libraries" />
+    <meta property="og:description" content="This week I validated the benchmark and corrected it with mentor&amp;#8217;s comments. I applied it to a test dataset of 1000 maps and applied a linear fit to see how it will escalate. I also installed some ANN..." />
+    <meta property="og:url" content="https://erramuzpe.github.io/gsoc2016/2016/06/10/Testing-A-N-N-libraries.html" />
+    <meta property="article:published_time" content="2016-06-09T22:00:00.000Z" />
+    <meta property="article:modified_time" content="2016-06-10T10:23:02.659Z" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Testing ANN libraries" />
+    <meta name="twitter:description" content="This week I validated the benchmark and corrected it with mentor&amp;#8217;s comments. I applied it to a test dataset of 1000 maps and applied a linear fit to see how it will escalate. I also installed some ANN..." />
+    <meta name="twitter:url" content="https://erramuzpe.github.io/gsoc2016/2016/06/10/Testing-A-N-N-libraries.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Neurovault: Image Search for Brain Maps",
+    "author": {
+        "@type": "Person",
+        "name": "Asier Erramuzpe",
+        "image": "https://avatars.githubusercontent.com/u/6176948?v=3",
+        "url": "undefined/author/undefined",
+        "sameAs": null
+    },
+    "headline": "Testing ANN libraries",
+    "url": "https://erramuzpe.github.io/gsoc2016/2016/06/10/Testing-A-N-N-libraries.html",
+    "datePublished": "2016-06-09T22:00:00.000Z",
+    "dateModified": "2016-06-10T10:23:02.659Z",
+    "description": "This week I validated the benchmark and corrected it with mentor&amp;#8217;s comments. I applied it to a test dataset of 1000 maps and applied a linear fit to see how it will escalate. I also installed some ANN..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost ?" />
+    <link rel="alternate" type="application/rss+xml" title="Neurovault: Image Search for Brain Maps" href="https://erramuzpe.github.io/gsoc2016/rss" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">
+</head>
+<body class="post-template">
+
+    
+
+
+<header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="https://erramuzpe.github.io/gsoc2016">Home</a>
+        <!-- <a class="subscribe-button icon-feed" href="https://erramuzpe.github.io/gsoc2016/rss/">Subscribe</a> -->
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Testing ANN libraries</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2016-06-10">10 June 2016</time> 
+            </section>
+        </header>
+
+        <section class="post-content">
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This week I validated the benchmark and corrected it with mentor&#8217;s comments. I applied it to a test dataset of 1000 maps and applied a linear fit to see how it will escalate. I also installed some ANN libraries in the Neurovault&#8217;s docker image and I tested them and tried to made an idea of how they work. I also made experiments with different distance metrics outside the libraries and using them. I coded a dictionary-based indexing, allowing to follow us the indexed maps.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_correcting_the_benchmark">Correcting the benchmark</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Last week I worked in implementing a benchmark that will allow us to compare the previous implementation with the new one. This week, I&#8217;ve made some minor corrections and improvements thanks to the comments of my mentor. Here, I&#8217;m showing some plots corresponding to the new corrections. I have deleted the "busy server" option and added a linear fitting to the results, a downloading of a test-set of 1000 maps and I changed the query function from the specific one being used now to "find_similar" which is the generic one, no matter which is the function below.</p>
+</div>
+<div class="paragraph">
+<p>The new plot for indexing:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="https://cloud.githubusercontent.com/assets/6176948/15931764/5adc5ea0-2e59-11e6-9128-bd3fc03f8730.png" alt="5adc5ea0-2e59-11e6-9128-bd3fc03f8730.png"></span></p>
+</div>
+<div class="paragraph">
+<p>I had problems when trying to make the exponential fitting, <a href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html">this</a> it was not working for me, but I don&#8217;t think exponential fitting makes much sense with this kind of growing shape.</p>
+</div>
+<div class="paragraph">
+<p>In the other hand, the query benchmark resulted in a very efficient result:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="https://cloud.githubusercontent.com/assets/6176948/15931765/5adcac66-2e59-11e6-88f0-5808a0d7cc4a.png" alt="5adcac66-2e59-11e6-88f0-5808a0d7cc4a.png"></span></p>
+</div>
+<div class="paragraph">
+<p>Since we are now querying how much "find_similar" takes to return the page, and the page is limited to 100 similar maps, the benchmark stops growing at 100. I fitted the line to the 1st 100 results. Actually, what can be happening is that the query itself is not significant wrt the time django needs to create the html, so it could be that the real fitting should have been done from the 101 value on:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="https://cloud.githubusercontent.com/assets/6176948/15932654/d2de0900-2e5c-11e6-926f-2a71ed9a0657.png" alt="d2de0900-2e5c-11e6-926f-2a71ed9a0657.png"></span></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ann_libraries">ANN libraries</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>With respecto to ANN libraries, I installed and tested <a href="https://github.com/pixelogik/NearPy">Nearpy</a>, <a href="https://github.com/ryanrhymes/panns">Panns</a>, <a href="http://www.cs.ubc.ca/research/flann/">Flann</a> and LSHF-BallTree-KDTree ANNs from <a href="http://scikit-learn.org/stable/modules/neighbors.html">scikit-learn</a> library in the Neurovault&#8217;s docker image. I made a bunch of experiments, like building, fitting and querying to understand similarities and specific pros/cons between them and get to know better the different constraints that have to be taken into account to make a propper choice.</p>
+</div>
+<div class="sect2">
+<h3 id="_results">Results</h3>
+<div class="paragraph">
+<p>Here, I show a toy-benchmark of Nearpy (I have built the engine with binary projections of size 20 and 10 hashes):</p>
+</div>
+<div class="paragraph">
+<p><a href="https://gist.github.com/erramuzpe/a1fc301e7466ffef85f9e3b5a41c3d2f">Results from queries</a>: they can be tested manually in Neurovault using the neurovault.org/images/<em>number</em>/ adress. For example, after querying <a href="http://neurovault.org/images/163/">this image</a> the Engine gives <a href="http://neurovault.org/images/8722/">this image</a> as result, which is <strong>PRETTY IMPRESSIVE</strong>, taking into account that I&#8217;ve done no effort to optimize the Engine and the distance used (Euclidean) needs of a regularization of the data (after performing it, probably results would be better).</p>
+</div>
+<div class="paragraph">
+<p>Results are not "complete". It gives just the ones that are closer, but not the rest. This results must be taken carefully, as they are just a toy-bench, not real data, not real results and not tested if results are accurate or just random. But it is useful to give an idea of the scale and magnitudes we are talking about. I am super-impressed by the bench results (and Nearpy was one of the worst ANN libraries in the global bench&#8230;&#8203;).</p>
+</div>
+<div class="paragraph">
+<p>Benchmark plot:
+<span class="image"><img src="https://cloud.githubusercontent.com/assets/6176948/15960893/4688e14a-2f02-11e6-90b9-e5993af8b08c.png" alt="4688e14a-2f02-11e6-90b9-e5993af8b08c.png"></span></p>
+</div>
+<div class="paragraph">
+<p>For the next week I will keep testing the libraries and reading docs to evaluate which is the solution that best fits us.</p>
+</div>
+</div>
+</div>
+</div>
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="" style="background-image: url(https://avatars.githubusercontent.com/u/6176948?v=3)"><span class="hidden">Asier Erramuzpe's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="">Asier Erramuzpe</a></h4>
+
+                    <p>Read <a href="">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    <span class="author-location icon-location">Macondo</span>
+                    
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/share?text=Testing%20ANN%20libraries&amp;url=https://erramuzpe.github.io/gsoc2016/2016/06/10/Testing-A-N-N-libraries.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://erramuzpe.github.io/gsoc2016/2016/06/10/Testing-A-N-N-libraries.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=https://erramuzpe.github.io/gsoc2016/2016/06/10/Testing-A-N-N-libraries.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+
+    </article>
+
+</main>
+
+
+
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="https://erramuzpe.github.io/gsoc2016">Neurovault: Image Search for Brain Maps</a> &copy; 2016</section>
+        <section class="poweredby">Proudly published with <a href="http://hubpress.io">HubPress</a></section>
+    </footer>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();      
+      </script>
+
+    <script type="text/javascript" src="//erramuzpe.github.io/gsoc2016/themes/Casper/assets/js/jquery.fitvids.js?v=1.0.0"></script>
+    <script type="text/javascript" src="//erramuzpe.github.io/gsoc2016/themes/Casper/assets/js/index.js?v=1.0.0"></script>
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-68839747-3', 'auto');
+    ga('send', 'pageview');
+
+    </script>
+</body>
+</html>
