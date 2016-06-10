@@ -1,0 +1,39 @@
+# Testing ANN libraries
+
+This week I validated the benchmark and corrected it with mentor's comments. I applied it to a test dataset of 1000 maps and applied a linear fit to see how it will escalate. I also installed some ANN libraries in the Neurovault's docker image and I tested them and tried to made an idea of how they work. I also made experiments with different distance metrics outside the libraries and using them. I coded a dictionary-based indexing, allowing to follow us the indexed maps.
+
+
+## Correcting the benchmark
+
+Last week I worked in implementing a benchmark that will allow us to compare the previous implementation with the new one. This week, I've made some minor corrections and improvements thanks to the comments of my mentor. Here, I'm showing some plots corresponding to the new corrections. I have deleted the "busy server" option and added a linear fitting to the results, a downloading of a test-set of 1000 maps and I changed the query function from the specific one being used now to "find_similar" which is the generic one, no matter which is the function below. 
+
+The new plot for indexing:
+
+image:https://cloud.githubusercontent.com/assets/6176948/15931764/5adc5ea0-2e59-11e6-9128-bd3fc03f8730.png[]
+
+I had problems when trying to make the exponential fitting, link:http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html[this] it was not working for me, but I don't think exponential fitting makes much sense with this kind of growing shape.
+
+
+In the other hand, the query benchmark resulted in a very efficient result: 
+ 
+image:https://cloud.githubusercontent.com/assets/6176948/15931765/5adcac66-2e59-11e6-88f0-5808a0d7cc4a.png[]
+
+Since we are now querying how much "find_similar" takes to return the page, and the page is limited to 100 similar maps, the benchmark stops growing at 100. I fitted the line to the 1st 100 results. Actually, what can be happening is that the query itself is not significant wrt the time django needs to create the html, so it could be that the real fitting should have been done from the 101 value on:
+
+
+image:https://cloud.githubusercontent.com/assets/6176948/15932654/d2de0900-2e5c-11e6-926f-2a71ed9a0657.png[]
+
+## ANN libraries 
+
+With respecto to ANN libraries, I installed and tested link:https://github.com/pixelogik/NearPy[Nearpy], link:https://github.com/ryanrhymes/panns[Panns], link:http://www.cs.ubc.ca/research/flann/[Flann] and LSHF-BallTree-KDTree ANNs from link:http://scikit-learn.org/stable/modules/neighbors.html[scikit-learn] library in the Neurovault's docker image. I made a bunch of experiments, like building, fitting and querying to understand similarities and specific pros/cons between them and get to know better the different constraints that have to be taken into account to make a propper choice.
+
+Here, I show a benchmark of Nearpy with 
+
+
+
+
+
+For the next week I will keep testing the libraries and reading docs to evaluate which is the solution that best fits us.
+
+
+
