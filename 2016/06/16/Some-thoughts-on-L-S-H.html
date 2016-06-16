@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Some thoughts on LSH</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="//erramuzpe.github.io/gsoc2016/themes/Casper/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="//erramuzpe.github.io/gsoc2016/themes/Casper/assets/css/screen.css?v=1.0.0" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+
+    <link rel="canonical" href="https://erramuzpe.github.io/gsoc2016/2016/06/16/Some-thoughts-on-L-S-H.html" />
+    
+    <meta property="og:site_name" content="Neurovault: Image Search for Brain Maps" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Some thoughts on LSH" />
+    <meta property="og:description" content="This week I have been working on testing different ANN-libraries, reading documentation and understanding what all this ANN-search is about, specifically Locality-sensitive hashing (LSH). In this post I will try to explain which are the bases of LSH and resume..." />
+    <meta property="og:url" content="https://erramuzpe.github.io/gsoc2016/2016/06/16/Some-thoughts-on-L-S-H.html" />
+    <meta property="article:published_time" content="2016-06-15T22:00:00.000Z" />
+    <meta property="article:modified_time" content="2016-06-16T14:59:55.667Z" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Some thoughts on LSH" />
+    <meta name="twitter:description" content="This week I have been working on testing different ANN-libraries, reading documentation and understanding what all this ANN-search is about, specifically Locality-sensitive hashing (LSH). In this post I will try to explain which are the bases of LSH and resume..." />
+    <meta name="twitter:url" content="https://erramuzpe.github.io/gsoc2016/2016/06/16/Some-thoughts-on-L-S-H.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Neurovault: Image Search for Brain Maps",
+    "author": {
+        "@type": "Person",
+        "name": "Asier Erramuzpe",
+        "image": "https://avatars.githubusercontent.com/u/6176948?v=3",
+        "url": "undefined/author/undefined",
+        "sameAs": null
+    },
+    "headline": "Some thoughts on LSH",
+    "url": "https://erramuzpe.github.io/gsoc2016/2016/06/16/Some-thoughts-on-L-S-H.html",
+    "datePublished": "2016-06-15T22:00:00.000Z",
+    "dateModified": "2016-06-16T14:59:55.667Z",
+    "description": "This week I have been working on testing different ANN-libraries, reading documentation and understanding what all this ANN-search is about, specifically Locality-sensitive hashing (LSH). In this post I will try to explain which are the bases of LSH and resume..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost ?" />
+    <link rel="alternate" type="application/rss+xml" title="Neurovault: Image Search for Brain Maps" href="https://erramuzpe.github.io/gsoc2016/rss" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">
+</head>
+<body class="post-template">
+
+    
+
+
+<header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="https://erramuzpe.github.io/gsoc2016">Home</a>
+        <!-- <a class="subscribe-button icon-feed" href="https://erramuzpe.github.io/gsoc2016/rss/">Subscribe</a> -->
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Some thoughts on LSH</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2016-06-16">16 June 2016</time> 
+            </section>
+        </header>
+
+        <section class="post-content">
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This week I have been working on testing different ANN-libraries, reading documentation and understanding what all this ANN-search is about, specifically Locality-sensitive hashing (LSH). In this post I will try to explain which are the bases of LSH and resume the different capabilities of the most important libraries in the field.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_how_does_lsh_work">How does LSH work?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The idea behind <strong>Locality-sensitive hashing</strong> (LSH) is to find similar data structures (3D brain maps, in this case). The fundamental idea is that <strong>similar brain maps will have similar hash-codes</strong>. For this purpose, K-bit hash-codes are generated, that allow us to insert a brain map into a hash-table that has several buckets (with the idea that having similar hash code, an image will end up in the same bucket).</p>
+</div>
+<div class="paragraph">
+<p>The main problem is that having similar hash-code is incompatible with falling in the same bucket by definition. The way to get rid of this is to repeat L times the procedure of indexing with different hash-tables / hash-codes (randomised process). This is an essential step to avoid missing potential neighbours.</p>
+</div>
+<div class="sect4">
+<h5 id="_how_is_this_accomplished">How is this accomplished?</h5>
+<div class="paragraph">
+<p>So, the goal is to detect the similar hash-codes for nearby points (<strong>nearby in the sense of a given distance</strong>). We first have to generate a series of random hyperplanes through our space of points. These planes will divide the data in up and below the plane. (0|1)! This procedure divides the space in 2^k buckets and each bucket will have a binary hash that represents that bucket. As the hyperplanes are randomly generated, this procedure has to be repeated several times (L times = number of hash tables). When completed, a intersection procedure has to be calculated to detect points that are close, but could have been in separate buckets by chance in some of the buckets.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_which_is_the_computational_cost_for_lsh">Which is the computational cost for LSH?</h5>
+<div class="paragraph">
+<p>If we have:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>N points (brain images).</p>
+</li>
+<li>
+<p>D dimensions of the data (~28000 fur us, using reduced representation of the images. Could be less if any dimensionality reduction algorithm was applied).</p>
+</li>
+<li>
+<p>K hyperplanes (or bit-codes) and&#8230;&#8203;</p>
+</li>
+<li>
+<p>L hash-tables</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>We turn into:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>We need DK operations to find the bucket where apoint lands on.</p>
+</li>
+<li>
+<p>N/2^K expected number of collisions.</p>
+</li>
+<li>
+<p>DN/2^K cost of comparisons (the more the Ks, the less the cost).</p>
+</li>
+<li>
+<p>But, we have to repeat everything L times:</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>so&#8230;&#8203;</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>LSH = LDK + LDN/2^K    &#8594;     O(log N)  (if K ~ log N)  else, if K is fixed, O(1)</p>
+</li>
+<li>
+<p>Indexing = D (ND)/sqrt(ND) &#8594; O(sqrt(N))</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>to make an idea, Brute-force solving of the problem would be = DN &#8594; O(N).</p>
+</div>
+<div class="paragraph">
+<p>You can find more considerations on the LSH problem in <a href="https://www.youtube.com/playlist?list=PLBv09BD7ez_6xoNh_luPdBmDCIHOQ3j7F">this</a> Youtube&#8217;s playlist.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_libraries_comparison">Libraries comparison</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We have several considerations with respect to the different libraries; At the moment we are using as vectors a ~28000 dimensions reduced representation of the images, which is quite high dimensional (we would probably have to reduce this representation to a lower dimensional solution, but while the bench times keep being efficient/small, we won&#8217;t). Other important considerations are: if it is possible to index new vectors after building the engine or how to delete previously indexed image and where to save the ANN engine (Redis, Memory&#8230;&#8203; this could be a major challenge, plus we have to bare in mind the RAM consumption).</p>
+</div>
+<div class="paragraph">
+<p>I have prepared a table that summarizes the main characteristics of the different candidate libraries for this project. As it can be seen, no one of them fulfills our needs completely, so it is possible that we have to balance pros and cons or we decide to make changes to the ones that best fit us in order to complete meet our needs.</p>
+</div>
+<table class="tableblock frame-all grid-all" style="width: 50%;">
+<caption class="title">Table 1. Comparison of different ANN-libraries</caption>
+<colgroup>
+<col style="width: 12%;">
+<col style="width: 12%;">
+<col style="width: 12%;">
+<col style="width: 12%;">
+<col style="width: 12%;">
+<col style="width: 12%;">
+<col style="width: 12%;">
+<col style="width: 12%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Libraries</th>
+<th class="tableblock halign-left valign-top">Customization (options)</th>
+<th class="tableblock halign-left valign-top">Index after fitting</th>
+<th class="tableblock halign-left valign-top">Delete indexes</th>
+<th class="tableblock halign-left valign-top">Memory storage</th>
+<th class="tableblock halign-left valign-top">Bench</th>
+<th class="tableblock halign-left valign-top">Lang</th>
+<th class="tableblock halign-left valign-top"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/pixelogik/NearPy">Nearpy</a></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No (deletes buckets)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Redis / Mongo / Pickle / RAM</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium - Poor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Python</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/lyst/rpforest">RPForest</a></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Low (gives no distance back)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pickle</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium - Poor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Python / C++</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://falconn-lib.org/">FALCONN</a></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No ?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No ?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unknown</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">C++ (Python wrapper)</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/searchivarius/nmslib">NMSLIB</a></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HD / Query server option (Apache)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">C++ (Python wrapper)</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/spotify/annoy">Annoy</a></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HD</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High - Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Python / C++</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://www.cs.ubc.ca/research/flann">FLANN</a></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No ?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High - Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">C++ (Python wrapper)</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/ryanrhymes/panns">Panns</a></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium - Poor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HD</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium - Poor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Python</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://scikit-learn.org/stable/modules/neighbors.html">scikit-learn</a></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium - Poor (Several Algorithms)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No ?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Poor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Python</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/aaalgo/kgraph">KGraph</a></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High-Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HD</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Poor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">C++</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>For the next week I will work on finding a way of testing the performance of the libraries in terms of accuracy at the time of evaluating "similarity". This is a major problem, since I have some questions about what is to be "similar" for 2 given brainmaps.</p>
+</div>
+</div>
+</div>
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="" style="background-image: url(https://avatars.githubusercontent.com/u/6176948?v=3)"><span class="hidden">Asier Erramuzpe's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="">Asier Erramuzpe</a></h4>
+
+                    <p>Read <a href="">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    <span class="author-location icon-location">Macondo</span>
+                    
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/share?text=Some%20thoughts%20on%20LSH&amp;url=https://erramuzpe.github.io/gsoc2016/2016/06/16/Some-thoughts-on-L-S-H.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://erramuzpe.github.io/gsoc2016/2016/06/16/Some-thoughts-on-L-S-H.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=https://erramuzpe.github.io/gsoc2016/2016/06/16/Some-thoughts-on-L-S-H.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+
+    </article>
+
+</main>
+
+
+
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="https://erramuzpe.github.io/gsoc2016">Neurovault: Image Search for Brain Maps</a> &copy; 2016</section>
+        <section class="poweredby">Proudly published with <a href="http://hubpress.io">HubPress</a></section>
+    </footer>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();      
+      </script>
+
+    <script type="text/javascript" src="//erramuzpe.github.io/gsoc2016/themes/Casper/assets/js/jquery.fitvids.js?v=1.0.0"></script>
+    <script type="text/javascript" src="//erramuzpe.github.io/gsoc2016/themes/Casper/assets/js/index.js?v=1.0.0"></script>
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-68839747-3', 'auto');
+    ga('send', 'pageview');
+
+    </script>
+</body>
+</html>
