@@ -25,7 +25,7 @@ image:https://cloud.githubusercontent.com/assets/6176948/15932654/d2de0900-2e5c-
 
 ## ANN libraries 
 
-With respecto to ANN libraries, I installed and tested link:https://github.com/pixelogik/NearPy[Nearpy], link:https://github.com/ryanrhymes/panns[Panns], link:http://www.cs.ubc.ca/research/flann/[Flann] and LSHF-BallTree-KDTree ANNs from link:http://scikit-learn.org/stable/modules/neighbors.html[scikit-learn] library in the Neurovault's docker image. I made a bunch of experiments, like building, fitting and querying to understand similarities and specific pros/cons between them and get to know better the different constraints that have to be taken into account to make a propper choice.
+With respect to to ANN libraries, I installed and tested link:https://github.com/pixelogik/NearPy[Nearpy], link:https://github.com/ryanrhymes/panns[Panns], link:http://www.cs.ubc.ca/research/flann/[Flann] and LSHF-BallTree-KDTree ANNs from link:http://scikit-learn.org/stable/modules/neighbors.html[scikit-learn] library in the Neurovault's docker image. I made a bunch of experiments, like building, fitting and querying to understand similarities and specific pros/cons between them and get to know better the different constraints that have to be taken into account to make a proper choice.
 
 ### Results
 
