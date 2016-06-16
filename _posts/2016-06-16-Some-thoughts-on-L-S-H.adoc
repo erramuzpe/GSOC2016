@@ -1,6 +1,48 @@
 # Some thoughts on LSH
 
-This week I validated the benchmark and corrected it with mentor's comments. I applied it to a test dataset of 1000 maps and applied a linear fit to see how it will escalate. I also installed some ANN libraries in the Neurovault's docker image and I tested them and tried to made an idea of how they work. I also made experiments with different distance metrics outside the libraries and using them. I coded a dictionary-based indexing, allowing to follow us the indexed maps.
+This week I have been working on testing different ANN-libraries, reading documentation and understanding what all this ANN-search is about, specifically Locality-sensitive hashing (LSH). In this post I will try to explain which are the bases of LSH and resume the different capabilities of the most important libraries in the field. 
+
+
+## How does LSH work?
+
+The idea behind *Locality-sensitive hashing* (LSH) is to find similar data structures (3D brain maps, in this case). The fundamental idea is that *similar brain maps will have similar hash-codes*. For this purpose, K-bit hash-codes are generated, that allow us to insert a brain map into a hash-table that has several buckets (with the idea that having similar hash code, an image will end up in the same bucket). 
+
+The main problem is that having similar hash-code is incompatible with falling in the same bucket by definition. The way to get rid of this is to repeat L times the procedure of indexing with different hash-tables / hash-codes (randomised process). This is an essential step to avoid missing potential neighbours. 
+
+##### How is this accomplished? 
+
+So, the goal is to detect the similar hash-codes for nearby points (*nearby in the sense of a given distance*). We first have to generate a series of random hyperplanes through our space of points. These planes will divide the data in up and below the plane. (0|1)! This procedure divides the space in 2^k buckets and each bucket will have a binary hash that represents that bucket. As the hyperplanes are randomly generated, this procedure has to be repeated several times (L times = number of hash tables). When completed, a intersection procedure has to be calculated to detect points that are close, but could have been in separate buckets by chance in some of the buckets.  
+
+##### Which is the computational cost for LSH?
+
+If we have:
+
+- N points (brain images).
+- D dimensions of the data (~28000 fur us, using reduced representation of the images. Could be less if any dimensionality reduction algorithm was applied). 
+- K hyperplanes (or bit-codes) and...
+- L hash-tables
+
+We turn into:
+
+- We need DK operations to find the bucket where apoint lands on. 
+- N/2^K expected number of collisions.
+- DN/2^K cost of comparisons (the more the Ks, the less the cost).
+- But, we have to repeat everything L times:
+
+so...
+
+- LSH = LDK + LDN/2^K    ->     O(log N)  (if K ~ log N)  else, if K is fixed, O(1)
+- Indexing = D (ND)/sqrt(ND) -> O(sqrt(N))
+
+to make an idea, Brute-force solving of the problem would be = DN -> O(N).
+
+You can find more considerations on the LSH problem in link:https://www.youtube.com/playlist?list=PLBv09BD7ez_6xoNh_luPdBmDCIHOQ3j7F[this] Youtube's playlist. 
+
+## Libraries comparison
+
+We have several considerations with respect to the different libraries; At the moment we are using as vectors a ~28000 dimensions reduced representation of the images, which is quite high dimensional (we would probably have to reduce this representation to a lower dimensional solution, but while the bench times keep being efficient/small, we won't). Other important considerations are: if it is possible to index new vectors after building the engine or how to delete previously indexed image and where to save the ANN engine (Redis, Memory... this could be a major challenge, plus we have to bare in mind the RAM consumption). 
+
+I have prepared a table that summarizes the main characteristics of the different candidate libraries for this project. As it can be seen, no one of them fulfills our needs completely, so it is possible that we have to balance pros and cons or we decide to make changes to the ones that best fit us in order to complete meet our needs.
 
 .Comparison of different ANN-libraries
 [cols="h,7*",options="header",width="50%"]
@@ -23,45 +65,7 @@ This week I validated the benchmark and corrected it with mentor's comments. I a
 
 
 
-## Correcting the benchmark
-
-Last week I worked in implementing a benchmark that will allow us to compare the previous implementation with the new one. This week, I've made some minor corrections and improvements thanks to the comments of my mentor. Here, I'm showing some plots corresponding to the new corrections. I have deleted the "busy server" option and added a linear fitting to the results, a downloading of a test-set of 1000 maps and I changed the query function from the specific one being used now to "find_similar" which is the generic one, no matter which is the function below. 
-
-The new plot for indexing:
-
-image:https://cloud.githubusercontent.com/assets/6176948/15931764/5adc5ea0-2e59-11e6-9128-bd3fc03f8730.png[]
-
-I had problems when trying to make the exponential fitting, link:http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html[this] it was not working for me, but I don't think exponential fitting makes much sense with this kind of growing shape.
-
-
-In the other hand, the query benchmark resulted in a very efficient result: 
- 
-image:https://cloud.githubusercontent.com/assets/6176948/15931765/5adcac66-2e59-11e6-88f0-5808a0d7cc4a.png[]
-
-Since we are now querying how much "find_similar" takes to return the page, and the page is limited to 100 similar maps, the benchmark stops growing at 100. I fitted the line to the 1st 100 results. Actually, what can be happening is that the query itself is not significant wrt the time django needs to create the html, so it could be that the real fitting should have been done from the 101 value on:
-
-
-image:https://cloud.githubusercontent.com/assets/6176948/15932654/d2de0900-2e5c-11e6-926f-2a71ed9a0657.png[]
-
-## ANN libraries 
-
-With respecto to ANN libraries, I installed and tested link:https://github.com/pixelogik/NearPy[Nearpy], link:https://github.com/ryanrhymes/panns[Panns], link:http://www.cs.ubc.ca/research/flann/[Flann] and LSHF-BallTree-KDTree ANNs from link:http://scikit-learn.org/stable/modules/neighbors.html[scikit-learn] library in the Neurovault's docker image. I made a bunch of experiments, like building, fitting and querying to understand similarities and specific pros/cons between them and get to know better the different constraints that have to be taken into account to make a propper choice.
-
-### Results
-
-Here, I show a toy-benchmark of Nearpy (I have built the engine with binary projections of size 20 and 10 hashes):
-
-
-link:https://gist.github.com/erramuzpe/a1fc301e7466ffef85f9e3b5a41c3d2f[Results from queries]: they can be tested manually in Neurovault using the neurovault.org/images/_number_/ adress. For example, after querying link:http://neurovault.org/images/163/[this image] the Engine gives link:http://neurovault.org/images/8722/[this image] as result, which is *PRETTY IMPRESSIVE*, taking into account that I've done no effort to optimize the Engine and the distance used (Euclidean) needs of a regularization of the data (after performing it, probably results would be better).
-
-Results are not "complete". It gives just the ones that are closer, but not the rest. This results must be taken carefully, as they are just a toy-bench, not real data, not real results and not tested if results are accurate or just random. But it is useful to give an idea of the scale and magnitudes we are talking about. I am super-impressed by the bench results (and Nearpy was one of the worst ANN libraries in the global bench...).
-
-Benchmark plot:
-image:https://cloud.githubusercontent.com/assets/6176948/15960893/4688e14a-2f02-11e6-90b9-e5993af8b08c.png[]
-
-
-
-For the next week I will keep testing the libraries and reading docs to evaluate which is the solution that best fits us.
+For the next week I will work on finding a way of testing the performance of the libraries in terms of accuracy at the time of evaluating "similarity". This is a major problem, since I have some questions about what is to be "similar" for 2 given brainmaps. 
 
 
 
