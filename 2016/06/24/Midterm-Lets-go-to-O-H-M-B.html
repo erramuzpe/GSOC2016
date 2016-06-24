@@ -23,7 +23,7 @@
     <meta property="og:description" content="In this post I was going to resume what has been done so far in the first part of GSoC, but this has been an strange week for me and I will just write about what I&amp;#8217;ve done..." />
     <meta property="og:url" content="https://erramuzpe.github.io/gsoc2016/2016/06/24/Midterm-Lets-go-to-O-H-M-B.html" />
     <meta property="article:published_time" content="2016-06-23T22:00:00.000Z" />
-    <meta property="article:modified_time" content="2016-06-24T16:25:53.840Z" />
+    <meta property="article:modified_time" content="2016-06-24T16:27:05.534Z" />
     
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Midterm - Let&#x27;s go to OHMB" />
@@ -45,7 +45,7 @@
     "headline": "Midterm - Let&#x27;s go to OHMB",
     "url": "https://erramuzpe.github.io/gsoc2016/2016/06/24/Midterm-Lets-go-to-O-H-M-B.html",
     "datePublished": "2016-06-23T22:00:00.000Z",
-    "dateModified": "2016-06-24T16:25:53.840Z",
+    "dateModified": "2016-06-24T16:27:05.534Z",
     "description": "In this post I was going to resume what has been done so far in the first part of GSoC, but this has been an strange week for me and I will just write about what I&amp;#8217;ve done..."
 }
     </script>
@@ -97,8 +97,9 @@
 <div class="paragraph">
 <p>This brought me to refactor the <code>find_similar()</code> function and to write me first test (yes, my first one).</p>
 </div>
-<div class="sect4">
-<h5 id="_dimensionality_reduction">Dimensionality reduction</h5>
+<div class="paragraph">
+<p>#Dimensionality reduction</p>
+</div>
 <div class="paragraph">
 <p>Having tested the previous week different distance measures, LSH properties and Engines, this week I was thinking on reducing the feature size I was using (4x4x4mm voxel size reduced representation of the maps = 28549 points). First thing I tried was to use a different reduction factor, so I tried with 16x16x16mm voxel size, turning into 450 points per subject. This had an incredible boost over the indexing and querying time, reducing the benchmark mean for over an order of magnitude. Results were quite similar to the ones using the 4x4x4mm approach.</p>
 </div>
@@ -106,8 +107,10 @@
 <p>The other approach tried was PCA. I fitted a space with 500 images and then transformed the rest into the new space. The projections were reduced to a lower space, but we still have the problem of results accuracy. We need something to prove if the results are correct or not.</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_discounted_cumulative_gain_dcg">Discounted Cumulative Gain (DCG)</h5>
+</div>
+<div class="sect1">
+<h2 id="_discounted_cumulative_gain_dcg">Discounted Cumulative Gain (DCG)</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p><a href="https://en.wikipedia.org/wiki/Discounted_cumulative_gain">Discounted Cummulative Gain</a>  is a measure of ranking quality. In information retrieval, it is often used to measure effectiveness of web search engine algorithms or related applications.</p>
 </div>
@@ -126,7 +129,6 @@ def dcg(r):
 </div>
 <div class="paragraph">
 <p>I will test the different approaches with this method to test their reliability in upcoming weeks. For now, let&#8217;s head Geneva for a Neuroimaging week!</p>
-</div>
 </div>
 </div>
 </div>
