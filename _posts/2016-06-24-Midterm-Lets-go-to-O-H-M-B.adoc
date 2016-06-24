@@ -11,13 +11,13 @@ We wanted to have all the comparisons for a given images, so I started to prepar
 
 This brought me to refactor the `find_similar()` function and to write me first test (yes, my first one).
 
-#Dimensionality reduction
+## Dimensionality reduction
 
 Having tested the previous week different distance measures, LSH properties and Engines, this week I was thinking on reducing the feature size I was using (4x4x4mm voxel size reduced representation of the maps = 28549 points). First thing I tried was to use a different reduction factor, so I tried with 16x16x16mm voxel size, turning into 450 points per subject. This had an incredible boost over the indexing and querying time, reducing the benchmark mean for over an order of magnitude. Results were quite similar to the ones using the 4x4x4mm approach.
 
 The other approach tried was PCA. I fitted a space with 500 images and then transformed the rest into the new space. The projections were reduced to a lower space, but we still have the problem of results accuracy. We need something to prove if the results are correct or not.
 
-## Discounted Cumulative Gain (DCG)
+### Discounted Cumulative Gain (DCG)
 
 https://en.wikipedia.org/wiki/Discounted_cumulative_gain[Discounted Cummulative Gain]  is a measure of ranking quality. In information retrieval, it is often used to measure effectiveness of web search engine algorithms or related applications.
 
