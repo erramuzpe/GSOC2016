@@ -1,0 +1,36 @@
+# Midterm - Let's go to OHMB
+
+In this post I was going to resume what has been done so far in the first part of GSoC, but this has been an strange week for me and I will just write about what I've done and let the resume and future goals for the next week. The strange circumstance is that I thought I was going to have a pleasant coding week and it turned yesterday into a hectic preparation for my stay in OHBM'16 in Geneva, Switzerland starting tomorrow until next Thursday. There, I will have the opportunity of meeting my last year's mentor C. Craddock and my actual mentor, so we will have the opportunity of catching up in person. This is the main reason of postponing the resume and the future goals, since it will be much more accurate after meeting the mentor. If anybody reading the blog (if there is actually someone reading this :P) wants to meet me, I will be presenting poster #1385 on Monday and #1486 on Tuesday.
+
+This week I have been working on an API call to get similar maps and in dimensionality reduction.
+
+
+## API
+
+We wanted to have all the comparisons for a given images, so I started to prepare a Serializer for the REST API of NeuroVault. The problem was that we are not generating the API response from a given Model, so I had to turn into a generic JSON response build by me. It was a god way of introducing myself into http://pandas.pydata.org/[Pandas]. I built a DataFrame with the necessary information an then convert it to JSON response.
+
+This brought me to refactor the `find_similar()` function and to write me first test (yes, my first one).
+
+##### Dimensionality reduction
+
+Having tested the previous week different distance measures, LSH properties and Engines, this week I was thinking on reducing the feature size I was using (4x4x4mm voxel size reduced representation of the maps = 28549 points). First thing I tried was to use a different reduction factor, so I tried with 16x16x16mm voxel size, turning into 450 points per subject. This had an incredible boost over the indexing and querying time, reducing the benchmark mean for over an order of magnitude. Results were quite similar to the ones using the 4x4x4mm approach.
+
+The other approach tried was PCA. I fitted a space with 500 images and then transformed the rest into the new space. The projections were reduced to a lower space, but we still have the problem of results accuracy. We need something to prove if the results are correct or not.
+
+##### Discounted Cumulative Gain (DCG)
+
+https://en.wikipedia.org/wiki/Discounted_cumulative_gain[Discounted Cummulative Gain]  is a measure of ranking quality. In information retrieval, it is often used to measure effectiveness of web search engine algorithms or related applications.
+
+I implemented DCG as described in the Wikipedia entry in some lines:
+
+``
+def dcg(r):
+    """Score is discounted cumulative gain (dcg)"""
+    r = np.asfarray(r)[:]
+    if r.size:
+        return r[0] + np.sum(r[1:] / np.log2(np.arange(2, r.size + 1)))
+    return 0
+    ``
+    
+I will test the different approaches with this method to test their reliability in upcoming weeks. For now, let's head Geneva for a Neuroimaging week!    
+    
