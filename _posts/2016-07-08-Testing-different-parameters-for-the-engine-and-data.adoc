@@ -1,0 +1,25 @@
+# Testing different parameters for the engine and data
+
+First of all, sorry about not writing last week, I was super-tired plus there was not much to tell about OHBM; I had a fantastic week, I met both Cameron and Chris in person and a bunch of well known neuroscience developers as well. Also, I had the opportunitty of learning a lot, several interesting posters and hands on in the Hackathon; I will hopefully come back to OHBM 2017, it was a great time. 
+
+## Comparison framework
+
+So, back to work, this week I've been building a framework to test different combinations of parameters and dimensionality reductions and treatment. My idea so far is to test different combinations of hash number, bit number, distance, resample dimension and Z scored data by now. This leads to a high possible number of combinations, so I will let this calculations for next week (I'm out of the lab atm, and my laptop is not powerful enough). Also, I will load as much maps in my local Neurovault since we decided to not overload the production server with JSON queries that need several hundreds of lines and this will take a bit of time. 
+
+The framework iterates over the whole possibilities, loads specific data and builds a different Engine each time. Loads the full dataset in the Engine and queries one by one all the possible maps. Then, these queries are evaluated against the actual results (previously generated and saved) with DCG (see previous weeks) and saved to report a mean DCG after the whole process. As an example, I've run once the framework with different resample dimensions and the rest of the parameters fixed:
+
+----
+DCG mean score for  [4, 4, 4]  :  1.76347265478
+DCG mean score for  [6, 6, 6]  :  1.85349872876
+DCG mean score for  [8, 8, 8]  :  1.85167174514
+DCG mean score for  [10, 10, 10]  :  1.80284846337
+DCG mean score for  [12, 12, 12]  :  1.72983034835
+DCG mean score for  [14, 14, 14]  :  1.78070238621
+DCG mean score for  [16, 16, 16]  :  1.8917845196
+----
+
+The higher the DCG score, the better the result. It seems that a reduction to [6, 6, 6] is a good solution, but also we can get great results by using [16, 16, 16], so this seems to have no direct effect on the performance. 
+
+### Problems
+
+I've noticed that for a small amount of images, the queries do not give back  100 images (since the number of buckets do not allow it). This is probably going to bias the results. I will think about it, for now, I can only say that it could be solved making an effort and increasing the dataset or normalizing the DCG results by the number of responses for the query. 
