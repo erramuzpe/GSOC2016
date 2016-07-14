@@ -1,0 +1,145 @@
+# Testing: Getting closer
+
+I'm writing just to keep you updated about what I've been working on these days. I started with 250 subjects yesterday, made some test with different parameters, figured out how to record better results (explained later) and decided to finally load the whole 940 subjects in my local Neurovault and calculate the whole score-set for each of the images (thus, a call to get_similar_images()). I left this running yesterday before leaving the lab and it was done by today, not a big deal after all.
+
+My advances so far were:
+
+1.- I ran a command on Neurovault's  that does the following:
+
+Iterates over different parameters (manually selected) -> e.g.
+
+resample_dim_pool = [[4,4,4],[6,6,6],[8,8,8],[10,10,10],[12,12,12],[16,16,16]]
+subjects = 940
+n_bits_pool = [3,4,5,7]
+hash_counts_pool = [10,20,30,40]
+metric_pool = ["euclidean", "cosine", "manhattan"]
+z_score_pool = ["no","yes"]
+
+resample_dim is how you resample the image before storing in a vector that will be used for the hashing.
+Yes, it is what you said, dimensions of resampling before hashing. The bigger the dimensions, smaller the size of the vector. 
+Yes, you are right, there is not saving of storage in the engine, but it's much faster to hash a small vector, for both indexing and querying. Also in terms of neurovault's storage is better to have smaller reduced representations if we are using them just  for comparison.
+
+I don't have now the exact numbers, but from 4mm to 16mm the diff is over 10x faster.
+
+subjects is static, no probs.
+n_bits is the number of buckets that your engine will be divided into (2^n_bits)
+hash_counts is the number of tables you will have in the Engine. More tables -> more overlap between buckets.
+more info about how n_bits and hash_counts (tables) relate -> https://erramuzpe.github.io/gsoc2016/2016/06/16/Some-thoughts-on-L-S-H.html
+metric is the distance that we will use to measure how far/close 2 given points are inside the buckets
+z_score is just if we apply zscoring over each of the features.
+
+and loads the necessary data for each of the parameters (features and real_scores (corr_values calculated from the actual implementation), basically)
+
+features are the vectors extracted from image.reduced_representation. In the actual implementation, are obtained after using a [4, 4, 4] resample_dim.
+real_scores is what I get from querying the images with the actual implementation (thus, absolute correlation values (corr_values))
+
+2.- Builds and Engine for each of the combinations and stores the data in the Engine.
+
+3.- Queries 1 by 1 each feature against the Engine and compares it with the real_scores using Discounted Cumulative Gain.
+
+4.- Saves and outputs results (mean results for each of the combinations).
+
+
+Conclusions and actions after some iterations:
+
+- Is not enough to calculate which combination has the highest DCG, we need also the error between the real_score and the engine_score. I am calculating both atm.
+
+real = the actual implementation results (correlation values)
+engine = the ones I get from Nearpy
+
+- Euclidean does slightly better than Cosine or Manhattan distance.
+- Z scoring the data does not work at all, worst results always.
+
+scipy.stats.zscore(x)  ## where x is a feature vector
+
+Across individual features (1 per map). I don't exclude the zeros (not very sure about this...).  
+
+
+- [IMPORTANT] Dimension of the feature does not influence at all the results at least from [4, 4, 4] up to [16, 16, 16]. Which is quite important, due to size (features) and speed (in the Engine) improvement when using a higher resample dimension, thus, smaller feature vectors: [4 ,4 ,4] = 28549 size feature vs. [16, 16, 16] = 450 size features.
+
+
+- [SUPER-IMPORTANT] n_bits and hash_counts represent the number of buckets and the number of tables of the engine. from the tests, a bigger number of n_bits (n_bits ^ 2 = number of buckets), smaller error. BUT this error reduction has a trick. The higher the number of buckets, the less images "fall" into the buckets. Similar images "fall" in the buckets, but then, the queries are done over these buckets. So, if we select a big number for n_bits, we will have more accurate results, but less results. e.g.
+
+for 940 subjects (with queries limited to 100 subjects):
+ 
+- n_bits = 7 -> error = 0.5 (100 subjects in the response)
+- n_bits = 9 -> error = 0.3 (20 subjects in the response)
+
+this can be solved increasing the number of tables (hash_count), that allows a bigger collision rate between buckets and reduces the false positive rate. BUT this comes with a computational cost.
+
+Long story short: we are lucky, since we know the size of our problem (ok, the size will increase, but in the worst scenario, n_bits increases the size of buckets exponentially and we could build the engine every time the number of images reaches a given size). The number of tables to choose, depends on the computational cost that we can absorb and the accuracy level we want to achieve.
+
+I attach a table with the mail, to show an example with some parameters fixed. The difference between 10, 40, 60 or 100 tables is just the time it takes to retrieve the result. For 940 subjects, the diff between 10 and 100 tables is like 3-4 seconds querying the WHOLE dataset (being 10 immediate).
+
+All is about balance.
+
+Let me know what you think, whenever you can, no hurries.
+
+
+
+
+in this comment I made a summarize of the speed tradeoff:
+
+https://github.com/NeuroVault/NeuroVault/pull/517#issuecomment-227447259
+
+
+######
+
+Now, I will try to put a visual example of the results. Let's select my local map #74 (http://neurovault.org/images/10896/):
+
+127.0.0.1/images/74/find_similar  gives me the following pks:
+
+[248.0, 294.0, 231.0, 295.0, 196.0, 55.0, 81.0, 129.0, 134.0, 289.0, 336.0, 117.0, 137.0, 36.0, 285.0, 212.0, 236.0, 312.0, 352.0, 313.0, 199.0, 219.0, 177.0, 270.0, 54.0, 271.0, 109.0, 190.0, 216.0, 35.0, 343.0, 42.0, 19.0, 311.0, 327.0, 63.0, 279.0, 64.0, 298.0, 207.0, 127.0, 38.0, 93.0, 99.0, 33.0, 46.0, 82.0, 243.0, 29.0, 165.0, 307.0, 27.0, 263.0, 246.0, 335.0, 276.0, 351.0, 223.0, 228.0, 91.0, 301.0, 135.0, 136.0, 333.0, 141.0, 153.0, 318.0, 288.0, 232.0, 40.0, 68.0, 160.0, 162.0, 345.0, 155.0, 122.0, 350.0, 138.0, 79.0, 34.0, 69.0, 150.0, 310.0, 266.0, 62.0, 88.0, 324.0, 200.0, 197.0, 247.0, 340.0, 344.0, 58.0, 119.0, 66.0, 277.0, 306.0, 233.0, 234.0, 51.0]
+
+with their respective corr values (just some of them, for visualization purposes):
+
+[(248.0, 0.562883203300397), (294.0, 0.375707749028625), (231.0, 0.305561152552545), (295.0, -0.236087595890327), (196.0, -0.220782727914374), (55.0, -0.217971226241057), (81.0, -0.212523129998579), (129.0, -0.212477329533889), (134.0, -0.209937024281208), (289.0, 0.204322139071006), (336.0, -0.203852042590488), (117.0, -0.200330390890613), (137.0, -0.200330390890613), (36.0, 0.200133232317886), (285.0, -0.194608559481946), (212.0, -0.19272952164319), (236.0, -0.1923215012287), (312.0, -0.191660714996371), (352.0, 0.188959520324262), (313.0, -0.186766338145649), (199.0, 0.184921832942244), (219.0, -0.184475254039742), (177.0, 0.181086977481782), (270.0, -0.17659228779659), (54.0, -0.175276174474736), (271.0, -0.173595158004806), (109.0, -0.173582802408002)
+
+
+the query over Nearpy (Engine built with [16, 16, 16] dim_resampling, euclidean distance, 7 bits and 40 tables) for the same #74 is the following (pks): (I've no pdf to show, because the view is not built yet)
+
+[248, 759, 294, 686, 456, 578, 671, 719, 435, 199, 94, 596, 687, 314, 19, 68, 327, 740, 595, 237, 289, 36, 211, 741, 872, 594, 579, 41, 128, 343, 586, 956, 932, 200, 351, 567, 890, 302, 715, 772, 527, 909, 523, 920, 696, 951, 150, 900, 622, 124, 56, 441, 187, 201, 166, 101, 228, 440, 155, 676, 135, 216, 136, 372, 902, 84, 77, 175, 96, 736, 401, 361, 233, 613, 232, 123, 420, 934, 834, 843, 583, 27, 131, 611, 297, 556, 931, 192, 727, 206, 144, 665, 376, 70, 405, 894, 379, 113, 378]
+
+So, the DCG for this query is 2.56 (DCG of the Nearpy's response) over a maximum of 4.2 (DCG of actual implementation).
+
+
+
+Now, we must do an effort to compare visually the results. The first item is the same, that is clear http://neurovault.org/images/10901. The second from the actual and the third of the Engine are also the same, ok, not bad.
+
+Now, let's go to the PDF. From my point of view, from the 3rd result on, the maps are nothing but similar wrt to the query...
+
+Let's see what the Engine is giving as response (I've to copy and paste the results, as we still don't have a find_similar() view for the engine):
+
+- The second one, 759 is not even in the first 100 of the actual implementation. In my local it is this one:
+https://mail.google.com/mail/u/0/?ui=2&ik=dbccbd2714&view=fimg&th=155e88afc9ef680f&attid=0.0.1&disp=emb&realattid=ii_155e8811f7a1581c&attbid=ANGjdJ8g0-0_iOenFRKb9Y8HpJS2G-QGI05S_e0cxNXYIsYUo4oeArbm8NkNkKK6WffKXwg8-tcshYlZeM5AVTRufkwqRAOhHbebI77fn6Tow2CX2S4P9amgjmauBBY&sz=w624-h258&ats=1468485407026&rm=155e88afc9ef680f&zw&atsh=1
+
+
+which seems similar to #74. 
+
+this is #719, the 8th one for the Engine. I took the one that looked more similar from the first 10... (maybe this was advantageous, but it is to show how the engine keeps showing similar images in comparison to the actual implementation, which is giving results based on correlations of 0.22 from the 5th result on and they don't seem to me very "similar"). 
+
+https://mail.google.com/mail/u/0/?ui=2&ik=dbccbd2714&view=fimg&th=155e88afc9ef680f&attid=0.0.2&disp=emb&realattid=ii_155e88610cffcd55&attbid=ANGjdJ_F65vhOBKigVpEDptWZa6qr2AL-W2aq-4YSQLuodslRQl2vX9JGCCNm3rkn0U8-9Ze7go-IcnF5QIy2XqZAyNLoQvQgoZWhU5ZsoKKdymGFsA0Gc22rBCzWFo&sz=w626-h264&ats=1468485407026&rm=155e88afc9ef680f&zw&atsh=1
+
+First of all, sorry about not writing last week, I was super-tired plus there was not much to tell about OHBM; I had a fantastic week, I met both Cameron and Chris in person and a bunch of well known neuroscience developers as well. Also, I had the opportunitty of learning a lot, several interesting posters and hands on in the Hackathon; I will hopefully come back to OHBM 2017, it was a great time. 
+
+## Comparison framework
+
+So, back to work, this week I've been building a framework to test different combinations of parameters and dimensionality reductions and treatment. My idea so far is to test different combinations of hash number, bit number, distance, resample dimension and Z scored data by now. This leads to a high possible number of combinations, so I will let this calculations for next week (I'm out of the lab atm, and my laptop is not powerful enough). Also, I will load as much maps in my local Neurovault since we decided to not overload the production server with JSON queries that need several hundreds of lines and this will take a bit of time. 
+
+The framework iterates over the whole possibilities, loads specific data and builds a different Engine each time. Loads the full dataset in the Engine and queries one by one all the possible maps. Then, these queries are evaluated against the actual results (previously generated and saved) with DCG (see previous weeks) and saved to report a mean DCG after the whole process. As an example, I've run once the framework with different resample dimensions and the rest of the parameters fixed:
+
+----
+DCG mean score for  [4, 4, 4]  :  1.76347265478
+DCG mean score for  [6, 6, 6]  :  1.85349872876
+DCG mean score for  [8, 8, 8]  :  1.85167174514
+DCG mean score for  [10, 10, 10]  :  1.80284846337
+DCG mean score for  [12, 12, 12]  :  1.72983034835
+DCG mean score for  [14, 14, 14]  :  1.78070238621
+DCG mean score for  [16, 16, 16]  :  1.8917845196
+----
+
+The higher the DCG score, the better the result. It seems that a reduction to [6, 6, 6] is a good solution, but also we can get great results by using [16, 16, 16], so this seems to have no direct effect on the performance. 
+
+### Problems
+
+I've noticed that for a small amount of images, the queries do not give back  100 images (since the number of buckets do not allow it). This is probably going to bias the results. I will think about it, for now, I can only say that it could be solved making an effort and increasing the dataset or normalizing the DCG results by the number of responses for the query. 
