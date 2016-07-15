@@ -113,13 +113,14 @@ From my point of view, from the 3rd result on, the maps are nothing but similar 
 Let's see what the Engine is giving as response (I've to copy and paste the results, as we still don't have a find_similar() view for the engine):
 
 - The second one, 759 is not even in the first 100 of the actual implementation. In my local it is this one:
-image::https://mail.google.com/mail/u/0/?ui=2&ik=dbccbd2714&view=fimg&th=155e88afc9ef680f&attid=0.0.1&disp=emb&realattid=ii_155e8811f7a1581c&attbid=ANGjdJ8g0-0_iOenFRKb9Y8HpJS2G-QGI05S_e0cxNXYIsYUo4oeArbm8NkNkKK6WffKXwg8-tcshYlZeM5AVTRufkwqRAOhHbebI77fn6Tow2CX2S4P9amgjmauBBY&sz=w624-h258&ats=1468485407026&rm=155e88afc9ef680f&zw&atsh=1
+
+image::https://mail.google.com/mail/u/0/?ui=2&ik=dbccbd2714&view=fimg&th=155e88afc9ef680f&attid=0.0.1&disp=emb&realattid=ii_155e8811f7a1581c&attbid=ANGjdJ8g0-0_iOenFRKb9Y8HpJS2G-QGI05S_e0cxNXYIsYUo4oeArbm8NkNkKK6WffKXwg8-tcshYlZeM5AVTRufkwqRAOhHbebI77fn6Tow2CX2S4P9amgjmauBBY&sz=w624-h258&ats=1468485407026&rm=155e88afc9ef680f&zw&atsh=1[]
 
 
 which seems similar to #74. 
 
 this is #719, the 8th one for the Engine. I took the one that looked more similar from the first 10... (maybe this was advantageous, but it is to show how the engine keeps showing similar images in comparison to the actual implementation, which is giving results based on correlations of 0.22 from the 5th result on and they don't seem to me very "similar"). 
 
-image::https://mail.google.com/mail/u/0/?ui=2&ik=dbccbd2714&view=fimg&th=155e88afc9ef680f&attid=0.0.2&disp=emb&realattid=ii_155e88610cffcd55&attbid=ANGjdJ_F65vhOBKigVpEDptWZa6qr2AL-W2aq-4YSQLuodslRQl2vX9JGCCNm3rkn0U8-9Ze7go-IcnF5QIy2XqZAyNLoQvQgoZWhU5ZsoKKdymGFsA0Gc22rBCzWFo&sz=w626-h264&ats=1468485407026&rm=155e88afc9ef680f&zw&atsh=1
+image::https://mail.google.com/mail/u/0/?ui=2&ik=dbccbd2714&view=fimg&th=155e88afc9ef680f&attid=0.0.2&disp=emb&realattid=ii_155e88610cffcd55&attbid=ANGjdJ_F65vhOBKigVpEDptWZa6qr2AL-W2aq-4YSQLuodslRQl2vX9JGCCNm3rkn0U8-9Ze7go-IcnF5QIy2XqZAyNLoQvQgoZWhU5ZsoKKdymGFsA0Gc22rBCzWFo&sz=w626-h264&ats=1468485407026&rm=155e88afc9ef680f&zw&atsh=1[]
 
 
