@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Testing: Getting closer</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="//erramuzpe.github.io/gsoc2016/themes/Casper/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="//erramuzpe.github.io/gsoc2016/themes/Casper/assets/css/screen.css?v=1.0.0" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+
+    <link rel="canonical" href="https://erramuzpe.github.io/gsoc2016/2016/07/15/Testing-Getting-closer.html" />
+    
+    <meta property="og:site_name" content="Neurovault: Image Search for Brain Maps" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Testing: Getting closer" />
+    <meta property="og:description" content="These days I&amp;#8217;ve been working on testing different parameters on the Engine. I started with 250 subjects on Monday, made some test with different parameters, figured out how to record better results (explained later) and decided to finally..." />
+    <meta property="og:url" content="https://erramuzpe.github.io/gsoc2016/2016/07/15/Testing-Getting-closer.html" />
+    <meta property="article:published_time" content="2016-07-14T22:00:00.000Z" />
+    <meta property="article:modified_time" content="2016-07-15T07:25:24.540Z" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Testing: Getting closer" />
+    <meta name="twitter:description" content="These days I&amp;#8217;ve been working on testing different parameters on the Engine. I started with 250 subjects on Monday, made some test with different parameters, figured out how to record better results (explained later) and decided to finally..." />
+    <meta name="twitter:url" content="https://erramuzpe.github.io/gsoc2016/2016/07/15/Testing-Getting-closer.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Neurovault: Image Search for Brain Maps",
+    "author": {
+        "@type": "Person",
+        "name": "Asier Erramuzpe",
+        "image": "https://avatars.githubusercontent.com/u/6176948?v=3",
+        "url": "undefined/author/undefined",
+        "sameAs": null
+    },
+    "headline": "Testing: Getting closer",
+    "url": "https://erramuzpe.github.io/gsoc2016/2016/07/15/Testing-Getting-closer.html",
+    "datePublished": "2016-07-14T22:00:00.000Z",
+    "dateModified": "2016-07-15T07:25:24.540Z",
+    "description": "These days I&amp;#8217;ve been working on testing different parameters on the Engine. I started with 250 subjects on Monday, made some test with different parameters, figured out how to record better results (explained later) and decided to finally..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost ?" />
+    <link rel="alternate" type="application/rss+xml" title="Neurovault: Image Search for Brain Maps" href="https://erramuzpe.github.io/gsoc2016/rss" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">
+</head>
+<body class="post-template">
+
+    
+
+
+<header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="https://erramuzpe.github.io/gsoc2016">Home</a>
+        <!-- <a class="subscribe-button icon-feed" href="https://erramuzpe.github.io/gsoc2016/rss/">Subscribe</a> -->
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Testing: Getting closer</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2016-07-15">15 July 2016</time> 
+            </section>
+        </header>
+
+        <section class="post-content">
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>These days I&#8217;ve been working on testing different parameters on the Engine. I started with 250 subjects on Monday, made some test with different parameters, figured out how to record better results (explained later) and decided to finally load the whole 940 subjects in my local Neurovault and calculate the whole score-set for each of the images (thus, a call to <code>get_similar_images()</code>). I left this running on Monady before leaving the lab and it was done by Tuesday, not a big deal after all.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_advances">Advances</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>My advances so far were:</p>
+</div>
+<div class="paragraph">
+<p>1.- I ran a command on Neurovault&#8217;s  that does the following:</p>
+</div>
+<div class="paragraph">
+<p>Iterates over different parameters (manually selected) &#8594; e.g.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>resample_dim_pool = [[4,4,4],[6,6,6],[8,8,8],[10,10,10],[12,12,12],[16,16,16]]
+subjects = 940
+n_bits_pool = [3,4,5,7]
+hash_counts_pool = [10,20,30,40]
+metric_pool = ["euclidean", "cosine", "manhattan"]
+z_score_pool = ["no","yes"]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>resample_dim</code> is how you resample the image before storing in a vector that will be used for the hashing, thus, dimensions of resampling before hashing. The bigger the dimensions, smaller the size of the vector.
+There is not saving of storage in the engine, but it&#8217;s much faster to hash a small vector, for both indexing and querying. Also in terms of neurovault&#8217;s storage is better to have smaller reduced representations if we are using them just  for comparison. From 4mm to 16mm the diff is over 10x faster,
+in <a href="https://github.com/NeuroVault/NeuroVault/pull/517#issuecomment-227447259">this</a> comment I made a summarize of the speed tradeoff:</p>
+</div>
+<div class="paragraph">
+<p><code>subjects</code> is a static parameter.</p>
+</div>
+<div class="paragraph">
+<p><code>n_bits</code> is the number of buckets that your engine will be divided into (2^n_bits)</p>
+</div>
+<div class="paragraph">
+<p><code>hash_counts</code> is the number of tables you will have in the Engine. More tables &#8594; more overlap between buckets.
+<a href="https://erramuzpe.github.io/gsoc2016/2016/06/16/Some-thoughts-on-L-S-H.html">More info</a>
+ about how <code>n_bits</code> and <code>hash_counts</code> (tables) relate.</p>
+</div>
+<div class="paragraph">
+<p><code>metric</code> is the distance that we will use to measure how far/close 2 given points are inside the buckets</p>
+</div>
+<div class="paragraph">
+<p><code>z_score</code> is just if we apply zscoring over each of the features. Across individual features (1 per map), not excluding the zeros .</p>
+</div>
+<div class="paragraph">
+<p><code>scipy.stats.zscore(x)  ## where x is a feature vector</code></p>
+</div>
+<div class="paragraph">
+<p>After this, it loads the necessary data for each of the parameters (features and <code>real_scores</code> (corr_values calculated from the actual implementation), basically). Features are the vectors extracted from image.reduced_representation. In the actual implementation, are obtained after using a [4, 4, 4] resample_dim.
+<code>real_scores</code> is what I get from querying the images with the actual implementation (thus, absolute correlation values (corr_values))</p>
+</div>
+<div class="paragraph">
+<p>2.- Builds and Engine for each of the combinations and stores the data in the Engine.</p>
+</div>
+<div class="paragraph">
+<p>3.- Queries 1 by 1 each feature against the Engine and compares it with the real_scores using Discounted Cumulative Gain.</p>
+</div>
+<div class="paragraph">
+<p>4.- Saves and outputs results (mean results for each of the combinations).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conclusions_and_actions">Conclusions and actions</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>It is not enough to calculate which combination has the highest DCG, we need also the error between the real_score and the engine_score. I am calculating both atm.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>real = the actual implementation results (correlation values)
+engine = the ones I get from Nearpy</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Euclidean does slightly better than Cosine or Manhattan distance.</p>
+</li>
+<li>
+<p>Z scoring the data does not work at all, worst results always.</p>
+</li>
+<li>
+<p>Dimensions of the feature does not influence at all the results at least from [4, 4, 4] up to [16, 16, 16]. Which is quite important, due to size (features) and speed (in the Engine) improvement when using a higher resample dimension, thus, smaller feature vectors: [4 ,4 ,4] = 28549 size feature vs. [16, 16, 16] = 450 size features.</p>
+</li>
+<li>
+<p><code>n_bits</code> and <code>hash_counts</code> represent the number of buckets and the number of tables of the engine. from the tests, a bigger number of n_bits (n_bits ^ 2 = number of buckets), smaller error. BUT this error reduction has a trick. The higher the number of buckets, the less images "fall" into the buckets. Similar images "fall" in the buckets, but then, the queries are done over these buckets. So, if we select a big number for n_bits, we will have more accurate results, but less results. e.g.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>for 940 subjects (with queries limited to 100 subjects):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>n_bits = 7 &#8594; error = 0.5 (100 subjects in the response)</p>
+</li>
+<li>
+<p>n_bits = 9 &#8594; error = 0.3 (20 subjects in the response)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>this can be solved increasing the number of tables (hash_count), that allows a bigger collision rate between buckets and reduces the false positive rate. BUT this comes with a computational cost.</p>
+</div>
+<div class="paragraph">
+<p>Long story short: we are lucky, since we know the size of our problem (ok, the size will increase, but in the worst scenario, n_bits increases the size of buckets exponentially and we could build the engine every time the number of images reaches a given size). The number of tables to choose, depends on the computational cost that we can absorb and the accuracy level we want to achieve.</p>
+</div>
+<div class="paragraph">
+<p>The difference between 10, 40, 60 or 100 tables is just the time it takes to retrieve the result. For 940 subjects, the diff between 10 and 100 tables is like 3-4 seconds querying the WHOLE dataset (being 10 immediate).</p>
+</div>
+<div class="paragraph">
+<p>All is about balance.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_example">Example</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now, I will try to put a visual example of the results. Let&#8217;s select my local map #74 (<a href="http://neurovault.org/images/10896/" class="bare">http://neurovault.org/images/10896/</a>):</p>
+</div>
+<div class="paragraph">
+<p>127.0.0.1/images/74/find_similar  gives me the following pks:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>248.0, 294.0, 231.0, 295.0, 196.0, 55.0, 81.0, 129.0, 134.0, 289.0, 336.0, 117.0, 137.0, 36.0, 285.0, 212.0, 236.0, 312.0, 352.0, 313.0, 199.0, 219.0, 177.0, 270.0, 54.0, 271.0, 109.0, 190.0, 216.0, 35.0, 343.0, 42.0, 19.0, 311.0, 327.0, 63.0, 279.0, 64.0, 298.0, 207.0, 127.0, 38.0, 93.0, 99.0, 33.0, 46.0, 82.0, 243.0, 29.0, 165.0, 307.0, 27.0, 263.0, 246.0, 335.0, 276.0, 351.0, 223.0, 228.0, 91.0, 301.0, 135.0, 136.0, 333.0, 141.0, 153.0, 318.0, 288.0, 232.0, 40.0, 68.0, 160.0, 162.0, 345.0, 155.0, 122.0, 350.0, 138.0, 79.0, 34.0, 69.0, 150.0, 310.0, 266.0, 62.0, 88.0, 324.0, 200.0, 197.0, 247.0, 340.0, 344.0, 58.0, 119.0, 66.0, 277.0, 306.0, 233.0, 234.0, 51.0]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>with their respective corr values (just some of them, for visualization purposes):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>(248.0, 0.562883203300397), (294.0, 0.375707749028625), (231.0, 0.305561152552545), (295.0, -0.236087595890327), (196.0, -0.220782727914374), (55.0, -0.217971226241057), (81.0, -0.212523129998579), (129.0, -0.212477329533889), (134.0, -0.209937024281208), (289.0, 0.204322139071006), (336.0, -0.203852042590488), (117.0, -0.200330390890613), (137.0, -0.200330390890613), (36.0, 0.200133232317886), (285.0, -0.194608559481946), (212.0, -0.19272952164319), (236.0, -0.1923215012287), (312.0, -0.191660714996371), (352.0, 0.188959520324262), (313.0, -0.186766338145649), (199.0, 0.184921832942244), (219.0, -0.184475254039742), (177.0, 0.181086977481782), (270.0, -0.17659228779659), (54.0, -0.175276174474736), (271.0, -0.173595158004806), (109.0, -0.173582802408002)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>the query over Nearpy (Engine built with [16, 16, 16] <code>dim_resampling</code>, euclidean distance, 7 bits and 40 tables) for the same #74 is the following (pks): (I&#8217;ve no pdf to show, because the view is not built yet)</p>
+</div>
+<div class="paragraph">
+<p>So, the DCG for this query is 2.56 (DCG of the Nearpy&#8217;s response) over a maximum of 4.2 (DCG of actual implementation).</p>
+</div>
+<div class="paragraph">
+<p>Now, we must do an effort to compare visually the results. The first item is the same, that is clear <a href="http://neurovault.org/images/10901" class="bare">http://neurovault.org/images/10901</a>. The second from the actual and the third of the Engine are also the same, ok, not bad.</p>
+</div>
+<div class="paragraph">
+<p>From my point of view, from the 3rd result on, the maps are nothing but similar with respect to the query&#8230;&#8203;</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s see what the Engine is giving as response (I&#8217;ve to copy and paste the results, as we still don&#8217;t have a find_similar() view for the engine):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The second one, 759 is not even in the first 100 of the actual implementation. In my local it is this one:</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://mail.google.com/mail/u/0/?ui=2&ik=dbccbd2714&view=fimg&th=155e88afc9ef680f&attid=0.0.1&disp=emb&realattid=ii_155e8811f7a1581c&attbid=ANGjdJ8g0-0_iOenFRKb9Y8HpJS2G-QGI05S_e0cxNXYIsYUo4oeArbm8NkNkKK6WffKXwg8-tcshYlZeM5AVTRufkwqRAOhHbebI77fn6Tow2CX2S4P9amgjmauBBY&sz=w624-h258&ats=1468485407026&rm=155e88afc9ef680f&zw&atsh=1" alt="?ui=2&amp;ik=dbccbd2714&amp;view=fimg&amp;th=155e88afc9ef680f&amp;attid=0.0.1&amp;disp=emb&amp;realattid=ii 155e8811f7a1581c&amp;attbid=ANGjdJ8g0 0 iOenFRKb9Y8HpJS2G QGI05S e0cxNXYIsYUo4oeArbm8NkNkKK6WffKXwg8 tcshYlZeM5AVTRufkwqRAOhHbebI77fn6Tow2CX2S4P9amgjmauBBY&amp;sz=w624 h258&amp;ats=1468485407026&amp;rm=155e88afc9ef680f&amp;zw&amp;atsh=1">
+</div>
+</div>
+<div class="paragraph">
+<p>which seems similar to #74.</p>
+</div>
+<div class="paragraph">
+<p>this is #719, the 8th one for the Engine. I took the one that looked more similar from the first 10&#8230;&#8203; (maybe this was advantageous, but it is to show how the engine keeps showing similar images in comparison to the actual implementation, which is giving results based on correlations of 0.22 from the 5th result on and they don&#8217;t seem to me very "similar").</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://mail.google.com/mail/u/0/?ui=2&ik=dbccbd2714&view=fimg&th=155e88afc9ef680f&attid=0.0.2&disp=emb&realattid=ii_155e88610cffcd55&attbid=ANGjdJ_F65vhOBKigVpEDptWZa6qr2AL-W2aq-4YSQLuodslRQl2vX9JGCCNm3rkn0U8-9Ze7go-IcnF5QIy2XqZAyNLoQvQgoZWhU5ZsoKKdymGFsA0Gc22rBCzWFo&sz=w626-h264&ats=1468485407026&rm=155e88afc9ef680f&zw&atsh=1" alt="?ui=2&amp;ik=dbccbd2714&amp;view=fimg&amp;th=155e88afc9ef680f&amp;attid=0.0.2&amp;disp=emb&amp;realattid=ii 155e88610cffcd55&amp;attbid=ANGjdJ F65vhOBKigVpEDptWZa6qr2AL W2aq 4YSQLuodslRQl2vX9JGCCNm3rkn0U8 9Ze7go IcnF5QIy2XqZAyNLoQvQgoZWhU5ZsoKKdymGFsA0Gc22rBCzWFo&amp;sz=w626 h264&amp;ats=1468485407026&amp;rm=155e88afc9ef680f&amp;zw&amp;atsh=1">
+</div>
+</div>
+</div>
+</div>
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="" style="background-image: url(https://avatars.githubusercontent.com/u/6176948?v=3)"><span class="hidden">Asier Erramuzpe's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="">Asier Erramuzpe</a></h4>
+
+                    <p>Read <a href="">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    <span class="author-location icon-location">Macondo</span>
+                    
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/share?text=Testing%3A%20Getting%20closer&amp;url=https://erramuzpe.github.io/gsoc2016/2016/07/15/Testing-Getting-closer.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://erramuzpe.github.io/gsoc2016/2016/07/15/Testing-Getting-closer.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=https://erramuzpe.github.io/gsoc2016/2016/07/15/Testing-Getting-closer.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+
+    </article>
+
+</main>
+
+
+
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="https://erramuzpe.github.io/gsoc2016">Neurovault: Image Search for Brain Maps</a> &copy; 2016</section>
+        <section class="poweredby">Proudly published with <a href="http://hubpress.io">HubPress</a></section>
+    </footer>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();      
+      </script>
+
+    <script type="text/javascript" src="//erramuzpe.github.io/gsoc2016/themes/Casper/assets/js/jquery.fitvids.js?v=1.0.0"></script>
+    <script type="text/javascript" src="//erramuzpe.github.io/gsoc2016/themes/Casper/assets/js/index.js?v=1.0.0"></script>
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-68839747-3', 'auto');
+    ga('send', 'pageview');
+
+    </script>
+</body>
+</html>
