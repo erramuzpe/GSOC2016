@@ -23,7 +23,7 @@
     <meta property="og:description" content="These days I&amp;#8217;ve been working on testing different parameters on the Engine. I started with 250 subjects on Monday, made some test with different parameters, figured out how to record better results (explained later) and decided to finally..." />
     <meta property="og:url" content="https://erramuzpe.github.io/gsoc2016/2016/07/15/Testing-Getting-closer.html" />
     <meta property="article:published_time" content="2016-07-14T22:00:00.000Z" />
-    <meta property="article:modified_time" content="2016-07-15T07:25:24.540Z" />
+    <meta property="article:modified_time" content="2016-07-19T15:39:19.018Z" />
     
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Testing: Getting closer" />
@@ -45,7 +45,7 @@
     "headline": "Testing: Getting closer",
     "url": "https://erramuzpe.github.io/gsoc2016/2016/07/15/Testing-Getting-closer.html",
     "datePublished": "2016-07-14T22:00:00.000Z",
-    "dateModified": "2016-07-15T07:25:24.540Z",
+    "dateModified": "2016-07-19T15:39:19.018Z",
     "description": "These days I&amp;#8217;ve been working on testing different parameters on the Engine. I started with 250 subjects on Monday, made some test with different parameters, figured out how to record better results (explained later) and decided to finally..."
 }
     </script>
@@ -228,6 +228,11 @@ engine = the ones I get from Nearpy</p>
 </div>
 <div class="paragraph">
 <p>the query over Nearpy (Engine built with [16, 16, 16] <code>dim_resampling</code>, euclidean distance, 7 bits and 40 tables) for the same #74 is the following (pks): (I&#8217;ve no pdf to show, because the view is not built yet)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[248, 759, 294, 686, 456, 578, 671, 719, 435, 199, 94, 596, 687, 314, 19, 68, 327, 740, 595, 237, 289, 36, 211, 741, 872, 594, 579, 41, 128, 343, 586, 956, 932, 200, 351, 567, 890, 302, 715, 772, 527, 909, 523, 920, 696, 951, 150, 900, 622, 124, 56, 441, 187, 201, 166, 101, 228, 440, 155, 676, 135, 216, 136, 372, 902, 84, 77, 175, 96, 736, 401, 361, 233, 613, 232, 123, 420, 934, 834, 843, 583, 27, 131, 611, 297, 556, 931, 192, 727, 206, 144, 665, 376, 70, 405, 894, 379, 113, 378]</pre>
+</div>
 </div>
 <div class="paragraph">
 <p>So, the DCG for this query is 2.56 (DCG of the Nearpy&#8217;s response) over a maximum of 4.2 (DCG of actual implementation).</p>
