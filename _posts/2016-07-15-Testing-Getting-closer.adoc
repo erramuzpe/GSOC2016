@@ -100,7 +100,9 @@ with their respective corr values (just some of them, for visualization purposes
 
 the query over Nearpy (Engine built with [16, 16, 16] `dim_resampling`, euclidean distance, 7 bits and 40 tables) for the same #74 is the following (pks): (I've no pdf to show, because the view is not built yet)
 
+----
 [248, 759, 294, 686, 456, 578, 671, 719, 435, 199, 94, 596, 687, 314, 19, 68, 327, 740, 595, 237, 289, 36, 211, 741, 872, 594, 579, 41, 128, 343, 586, 956, 932, 200, 351, 567, 890, 302, 715, 772, 527, 909, 523, 920, 696, 951, 150, 900, 622, 124, 56, 441, 187, 201, 166, 101, 228, 440, 155, 676, 135, 216, 136, 372, 902, 84, 77, 175, 96, 736, 401, 361, 233, 613, 232, 123, 420, 934, 834, 843, 583, 27, 131, 611, 297, 556, 931, 192, 727, 206, 144, 665, 376, 70, 405, 894, 379, 113, 378]
+----
 
 So, the DCG for this query is 2.56 (DCG of the Nearpy's response) over a maximum of 4.2 (DCG of actual implementation).
 
