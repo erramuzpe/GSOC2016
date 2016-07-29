@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Migration time</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="//erramuzpe.github.io/gsoc2016/themes/Casper/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="//erramuzpe.github.io/gsoc2016/themes/Casper/assets/css/screen.css?v=1.0.0" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+
+    <link rel="canonical" href="https://erramuzpe.github.io/gsoc2016/2016/07/29/Migration-time.html" />
+    
+    <meta property="og:site_name" content="Neurovault: Image Search for Brain Maps" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Migration time" />
+    <meta property="og:description" content="This last 2 weeks I&amp;#8217;ve been working in migrating the new solution to the main branch of Neurovault. I&amp;#8217;m centering my efforts in making the whole similarity search feature to work. Also, I had a videocall..." />
+    <meta property="og:url" content="https://erramuzpe.github.io/gsoc2016/2016/07/29/Migration-time.html" />
+    <meta property="article:published_time" content="2016-07-28T22:00:00.000Z" />
+    <meta property="article:modified_time" content="2016-07-29T14:47:10.780Z" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Migration time" />
+    <meta name="twitter:description" content="This last 2 weeks I&amp;#8217;ve been working in migrating the new solution to the main branch of Neurovault. I&amp;#8217;m centering my efforts in making the whole similarity search feature to work. Also, I had a videocall..." />
+    <meta name="twitter:url" content="https://erramuzpe.github.io/gsoc2016/2016/07/29/Migration-time.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Neurovault: Image Search for Brain Maps",
+    "author": {
+        "@type": "Person",
+        "name": "Asier Erramuzpe",
+        "image": "https://avatars.githubusercontent.com/u/6176948?v=3",
+        "url": "undefined/author/undefined",
+        "sameAs": null
+    },
+    "headline": "Migration time",
+    "url": "https://erramuzpe.github.io/gsoc2016/2016/07/29/Migration-time.html",
+    "datePublished": "2016-07-28T22:00:00.000Z",
+    "dateModified": "2016-07-29T14:47:10.780Z",
+    "description": "This last 2 weeks I&amp;#8217;ve been working in migrating the new solution to the main branch of Neurovault. I&amp;#8217;m centering my efforts in making the whole similarity search feature to work. Also, I had a videocall..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost ?" />
+    <link rel="alternate" type="application/rss+xml" title="Neurovault: Image Search for Brain Maps" href="https://erramuzpe.github.io/gsoc2016/rss" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">
+</head>
+<body class="post-template">
+
+    
+
+
+<header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        <a class="back-button icon-arrow-left" href="https://erramuzpe.github.io/gsoc2016">Home</a>
+        <!-- <a class="subscribe-button icon-feed" href="https://erramuzpe.github.io/gsoc2016/rss/">Subscribe</a> -->
+    </nav>
+</header>
+
+<main class="content" role="main">
+
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Migration time</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2016-07-29">29 July 2016</time> 
+            </section>
+        </header>
+
+        <section class="post-content">
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This last 2 weeks I&#8217;ve been working in migrating the new solution to the main branch of Neurovault. I&#8217;m centering my efforts in making the whole similarity search feature to work. Also, I had a videocall with the mentor and we agreed in a set of deliberables that I would have to complete in order to get the Summer of Code passed.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_deliberables">Deliberables</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <strong>minimum set of deliverables</strong> agreed with Chris are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Written report of activities (Documentation will be an important part of the work done)</p>
+</li>
+<li>
+<p>Benchmarking finished and merged</p>
+</li>
+<li>
+<p>Refactoring find_similar view to table form, avoiding pybraincompare dependency, using the json format already implemented. Improve the call to the json with length of max comparisons to retrieve trough GET in the url.</p>
+</li>
+<li>
+<p>Research and find solutions for 2 problems:</p>
+</li>
+<li>
+<p>How to maintain Engines (find in the literature), scaling, rebuilding&#8230;&#8203;</p>
+</li>
+<li>
+<p>Brainmaps compression (use a hashing function that fits our problem)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Desirable:</strong> Full implementation of the Engine in a single PR.</p>
+</div>
+<div class="paragraph">
+<p>I am positive towards completing the objectives and actually have already completed (or almost completed XD) most of them. I&#8217;m at the moment advancing in documentation and implementation at the same time.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_migration">Migration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This will be a major challenge, since some Models have to be removed, a lot of functions will be changed and is not clear how the new Engine will be saved in Memory or how the insertion of new features will be handled.  I&#8217;ve achieved to make it work so far, and fixed some workflow errors related to the previous implementation (I want everything to be working as smooth and scalable as possible).</p>
+</div>
+<div class="paragraph">
+<p>What I have achieved this week is to, at least, create the Engine, index some features and query them. After this, the find_similar view shows the same information as it was showing for the previous implementation. This is a big step, since this will allow me to finally test and finish the benchmark and to be able to <strong>see</strong> results of the queries to the Engine.</p>
+</div>
+<div class="paragraph">
+<p>This last 3 weeks are going to be a great challenge, but I feel confident I will be able to achieve all the objectives.</p>
+</div>
+</div>
+</div>
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="" style="background-image: url(https://avatars.githubusercontent.com/u/6176948?v=3)"><span class="hidden">Asier Erramuzpe's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="">Asier Erramuzpe</a></h4>
+
+                    <p>Read <a href="">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    <span class="author-location icon-location">Macondo</span>
+                    
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/share?text=Migration%20time&amp;url=https://erramuzpe.github.io/gsoc2016/2016/07/29/Migration-time.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://erramuzpe.github.io/gsoc2016/2016/07/29/Migration-time.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=https://erramuzpe.github.io/gsoc2016/2016/07/29/Migration-time.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+
+    </article>
+
+</main>
+
+
+
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="https://erramuzpe.github.io/gsoc2016">Neurovault: Image Search for Brain Maps</a> &copy; 2016</section>
+        <section class="poweredby">Proudly published with <a href="http://hubpress.io">HubPress</a></section>
+    </footer>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();      
+      </script>
+
+    <script type="text/javascript" src="//erramuzpe.github.io/gsoc2016/themes/Casper/assets/js/jquery.fitvids.js?v=1.0.0"></script>
+    <script type="text/javascript" src="//erramuzpe.github.io/gsoc2016/themes/Casper/assets/js/index.js?v=1.0.0"></script>
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-68839747-3', 'auto');
+    ga('send', 'pageview');
+
+    </script>
+</body>
+</html>
