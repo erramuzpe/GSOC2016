@@ -1,6 +1,8 @@
 # Testing: Getting closer
 
-I'm writing just to keep you updated about what I've been working on these days. I started with 250 subjects yesterday, made some test with different parameters, figured out how to record better results (explained later) and decided to finally load the whole 940 subjects in my local Neurovault and calculate the whole score-set for each of the images (thus, a call to get_similar_images()). I left this running yesterday before leaving the lab and it was done by today, not a big deal after all.
+These days I've been testing extensively diferent options over my local database. I started with 250 subjects on Monday, made some tests with different parameters, figured out how to record better results (explained later) and decided to finally load the whole 940 subjects in my local Neurovault and calculate the whole score-set for each of the images (thus, a call to get_similar_images()). I left this running on Monday before leaving the lab and it was done by Tuesday, not a big deal after all.
+
+## Actions
 
 My advances so far were:
 
@@ -8,25 +10,29 @@ My advances so far were:
 
 Iterates over different parameters (manually selected) -> e.g.
 
+....
 resample_dim_pool = [[4,4,4],[6,6,6],[8,8,8],[10,10,10],[12,12,12],[16,16,16]]
 subjects = 940
 n_bits_pool = [3,4,5,7]
 hash_counts_pool = [10,20,30,40]
 metric_pool = ["euclidean", "cosine", "manhattan"]
 z_score_pool = ["no","yes"]
+....
 
-resample_dim is how you resample the image before storing in a vector that will be used for the hashing.
-Yes, it is what you said, dimensions of resampling before hashing. The bigger the dimensions, smaller the size of the vector. 
-Yes, you are right, there is not saving of storage in the engine, but it's much faster to hash a small vector, for both indexing and querying. Also in terms of neurovault's storage is better to have smaller reduced representations if we are using them just  for comparison.
+`resample_dim` is how you resample the image before storing in a vector that will be used for the hashing, thus dimensions of resampling before hashing. The bigger the dimensions, smaller the size of the vector. 
+This reduction does not imply saving of storage in the engine, but it's much faster to hash a small vector, for both indexing and querying. Also in terms of neurovault's storage is better to have smaller reduced representations if we are using them just  for comparison. From 4mm to 16mm the diff is over 10x faster.
 
-I don't have now the exact numbers, but from 4mm to 16mm the diff is over 10x faster.
+`n_bits` is the number of buckets that your engine will be divided into (2^n_bits).
 
-subjects is static, no probs.
-n_bits is the number of buckets that your engine will be divided into (2^n_bits)
-hash_counts is the number of tables you will have in the Engine. More tables -> more overlap between buckets.
+`hash_counts` is the number of tables you will have in the Engine. More tables -> more overlap between buckets.
+
 more info about how n_bits and hash_counts (tables) relate -> https://erramuzpe.github.io/gsoc2016/2016/06/16/Some-thoughts-on-L-S-H.html
-metric is the distance that we will use to measure how far/close 2 given points are inside the buckets
-z_score is just if we apply zscoring over each of the features.
+
+`metric` is the distance that we will use to measure how far/close 2 given points are inside the buckets
+
+`z_score`(`scipy.stats.zscore(x)  ## where x is a feature vector`) is just if we apply zscoring over each of the features.
+Across individual features (1 per map)not excluding the zeros.
+
 
 and loads the necessary data for each of the parameters (features and real_scores (corr_values calculated from the actual implementation), basically)
 
@@ -40,7 +46,7 @@ real_scores is what I get from querying the images with the actual implementatio
 4.- Saves and outputs results (mean results for each of the combinations).
 
 
-Conclusions and actions after some iterations:
+### Conclusions and actions after some iterations:
 
 - Is not enough to calculate which combination has the highest DCG, we need also the error between the real_score and the engine_score. I am calculating both atm.
 
@@ -50,9 +56,7 @@ engine = the ones I get from Nearpy
 - Euclidean does slightly better than Cosine or Manhattan distance.
 - Z scoring the data does not work at all, worst results always.
 
-scipy.stats.zscore(x)  ## where x is a feature vector
 
-Across individual features (1 per map). I don't exclude the zeros (not very sure about this...).  
 
 
 - [IMPORTANT] Dimension of the feature does not influence at all the results at least from [4, 4, 4] up to [16, 16, 16]. Which is quite important, due to size (features) and speed (in the Engine) improvement when using a higher resample dimension, thus, smaller feature vectors: [4 ,4 ,4] = 28549 size feature vs. [16, 16, 16] = 450 size features.
@@ -62,8 +66,10 @@ Across individual features (1 per map). I don't exclude the zeros (not very sure
 
 for 940 subjects (with queries limited to 100 subjects):
  
+....
 - n_bits = 7 -> error = 0.5 (100 subjects in the response)
 - n_bits = 9 -> error = 0.3 (20 subjects in the response)
+....
 
 this can be solved increasing the number of tables (hash_count), that allows a bigger collision rate between buckets and reduces the false positive rate. BUT this comes with a computational cost.
 
