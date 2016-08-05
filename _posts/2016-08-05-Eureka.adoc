@@ -1,12 +1,12 @@
 # Eureka!
 
-This week I finally made the new Engine work! As we are approaching the end of GSoC 2016, I am more and more concentrated in the project and even if I feel that NeuroVault is a mid-sized project that has many parts that still I don't understand, the whole thing starts to make sense for me. 
+This week I finally made the new Engine work! As we are approaching the end of GSoC 2016, I am more and more concentrated in the project and, even if I feel that NeuroVault is a mid-sized project that has many parts that still I don't understand, the whole thing starts to make sense for me. 
 
-Let me resume what I was doing this last week, because it was really a great bunch of things.
+Let me resume what I was doing last week, because it was really a great bunch of things.
 
 I made through and migrated the whole Engine, making it work. Additions, super-fast indexes, super-fast similarity queries, changes and deletions of new maps are working as they should, and this makes me very happy :_) .
 
-But the best thing of this achievement is not that I made it, but *HOW* I made it. So, the thing was that I was working on migration, I made the insertions and building of the Engine, everything working fine... *but*, I arrived to the moment of implementing image changes and deletions and I realized that NearPy has no implemented method for such thing. It has a deletion of bucket method, but I needed the one for a single key and vector. image:https://kallinablog.files.wordpress.com/2016/02/shocked-emoji.png?w=462[fear, 50,50]
+But the best thing of this achievement is not that I made it (LOL), but *HOW* I made it. So, the thing was that I was working on migration, I made the insertions and building of the Engine, everything working fine... *but*, I arrived to the moment of implementing image changes and deletions and I realized that NearPy has no implemented method for such thing. It has a deletion of bucket method, but I needed the one for a single key and vector. image:https://kallinablog.files.wordpress.com/2016/02/shocked-emoji.png?w=462[fear, 50,50]
 
 Ok, don't panic, let's go to Project's repo... and found link:https://github.com/pixelogik/NearPy/issues/42[this issue]. 
 
@@ -27,10 +27,12 @@ The reason is that due to constraints in how the Engine is built, could be that 
 
 ##### What else did you get done?
 
-I factored all the main migration actions to be consistent (still some work to do here). I built separate commands for build_engine() and dimensionality_reduction() in case it is needed to change it from time to time. I also started with the documentation work, that will be a big thing.
+I factored all the main migration actions to be consistent (still some work to do here). I built separate commands for build_engine() and dimensionality_reduction() in case it is needed to rebuild it from time to time. I also continued the documentation work, that will be a big thing. I compared the results for [16,16,16], [8,8,8] and [4,4,4] map_reduced_representation dimensions visually. There is no change between then in the results, but there is a big change in performance. I will explain this deeply in the documentation. 
+
+
 
 ##### What do you plan on doing next week?
 
-Finish and clean the migration PR. Write tests. Clean previous implementation's code not being used anymore. Control access to shared tasks (writing, deletion of keys) with Celery. Write more documentation.
+Finish and clean the migration PR. Write tests. Clean previous implementation's code not being used anymore. Control access to shared tasks (writing, deletion of keys) with Celery. Write more documentation. If I have time, make experiments with different Engine parameters (distances, PCA, bit number, hash table number...), as I can evaluate visually the results. 
 
 
