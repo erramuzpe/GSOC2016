@@ -20,14 +20,14 @@
     <meta property="og:site_name" content="Neurovault: Image Search for Brain Maps" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="Eureka!" />
-    <meta property="og:description" content="This week I finally made the new Engine work! As we are approaching the end of GSoC 2016, I am more and more concentrated in the project and even if I feel that NeuroVault is a mid-sized project that has..." />
+    <meta property="og:description" content="This week I finally made the new Engine work! As we are approaching the end of GSoC 2016, I am more and more concentrated in the project and, even if I feel that NeuroVault is a mid-sized project that has..." />
     <meta property="og:url" content="https://erramuzpe.github.io/gsoc2016/2016/08/05/Eureka.html" />
     <meta property="article:published_time" content="2016-08-04T22:00:00.000Z" />
-    <meta property="article:modified_time" content="2016-08-05T10:07:02.178Z" />
+    <meta property="article:modified_time" content="2016-08-05T10:16:24.106Z" />
     
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Eureka!" />
-    <meta name="twitter:description" content="This week I finally made the new Engine work! As we are approaching the end of GSoC 2016, I am more and more concentrated in the project and even if I feel that NeuroVault is a mid-sized project that has..." />
+    <meta name="twitter:description" content="This week I finally made the new Engine work! As we are approaching the end of GSoC 2016, I am more and more concentrated in the project and, even if I feel that NeuroVault is a mid-sized project that has..." />
     <meta name="twitter:url" content="https://erramuzpe.github.io/gsoc2016/2016/08/05/Eureka.html" />
     
     <script type="application/ld+json">
@@ -45,8 +45,8 @@
     "headline": "Eureka!",
     "url": "https://erramuzpe.github.io/gsoc2016/2016/08/05/Eureka.html",
     "datePublished": "2016-08-04T22:00:00.000Z",
-    "dateModified": "2016-08-05T10:07:02.178Z",
-    "description": "This week I finally made the new Engine work! As we are approaching the end of GSoC 2016, I am more and more concentrated in the project and even if I feel that NeuroVault is a mid-sized project that has..."
+    "dateModified": "2016-08-05T10:16:24.106Z",
+    "description": "This week I finally made the new Engine work! As we are approaching the end of GSoC 2016, I am more and more concentrated in the project and, even if I feel that NeuroVault is a mid-sized project that has..."
 }
     </script>
 
@@ -81,16 +81,16 @@
             <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This week I finally made the new Engine work! As we are approaching the end of GSoC 2016, I am more and more concentrated in the project and even if I feel that NeuroVault is a mid-sized project that has many parts that still I don&#8217;t understand, the whole thing starts to make sense for me.</p>
+<p>This week I finally made the new Engine work! As we are approaching the end of GSoC 2016, I am more and more concentrated in the project and, even if I feel that NeuroVault is a mid-sized project that has many parts that still I don&#8217;t understand, the whole thing starts to make sense for me.</p>
 </div>
 <div class="paragraph">
-<p>Let me resume what I was doing this last week, because it was really a great bunch of things.</p>
+<p>Let me resume what I was doing last week, because it was really a great bunch of things.</p>
 </div>
 <div class="paragraph">
 <p>I made through and migrated the whole Engine, making it work. Additions, super-fast indexes, super-fast similarity queries, changes and deletions of new maps are working as they should, and this makes me very happy :_) .</p>
 </div>
 <div class="paragraph">
-<p>But the best thing of this achievement is not that I made it, but <strong>HOW</strong> I made it. So, the thing was that I was working on migration, I made the insertions and building of the Engine, everything working fine&#8230;&#8203; <strong>but</strong>, I arrived to the moment of implementing image changes and deletions and I realized that NearPy has no implemented method for such thing. It has a deletion of bucket method, but I needed the one for a single key and vector. <span class="image"><img src="https://kallinablog.files.wordpress.com/2016/02/shocked-emoji.png?w=462" alt="fear" width="50" height="50"></span></p>
+<p>But the best thing of this achievement is not that I made it (LOL), but <strong>HOW</strong> I made it. So, the thing was that I was working on migration, I made the insertions and building of the Engine, everything working fine&#8230;&#8203; <strong>but</strong>, I arrived to the moment of implementing image changes and deletions and I realized that NearPy has no implemented method for such thing. It has a deletion of bucket method, but I needed the one for a single key and vector. <span class="image"><img src="https://kallinablog.files.wordpress.com/2016/02/shocked-emoji.png?w=462" alt="fear" width="50" height="50"></span></p>
 </div>
 <div class="paragraph">
 <p>Ok, don&#8217;t panic, let&#8217;s go to Project&#8217;s repo&#8230;&#8203; and found <a href="https://github.com/pixelogik/NearPy/issues/42">this issue</a>.</p>
@@ -119,13 +119,13 @@ The reason is that due to constraints in how the Engine is built, could be that 
 <div class="sect4">
 <h5 id="_what_else_did_you_get_done">What else did you get done?</h5>
 <div class="paragraph">
-<p>I factored all the main migration actions to be consistent (still some work to do here). I built separate commands for build_engine() and dimensionality_reduction() in case it is needed to change it from time to time. I also started with the documentation work, that will be a big thing.</p>
+<p>I factored all the main migration actions to be consistent (still some work to do here). I built separate commands for build_engine() and dimensionality_reduction() in case it is needed to rebuild it from time to time. I also continued the documentation work, that will be a big thing. I compared the results for [16,16,16], [8,8,8] and [4,4,4] map_reduced_representation dimensions visually. There is no change between then in the results, but there is a big change in performance. I will explain this deeply in the documentation.</p>
 </div>
 </div>
 <div class="sect4">
 <h5 id="_what_do_you_plan_on_doing_next_week">What do you plan on doing next week?</h5>
 <div class="paragraph">
-<p>Finish and clean the migration PR. Write tests. Clean previous implementation&#8217;s code not being used anymore. Control access to shared tasks (writing, deletion of keys) with Celery. Write more documentation.</p>
+<p>Finish and clean the migration PR. Write tests. Clean previous implementation&#8217;s code not being used anymore. Control access to shared tasks (writing, deletion of keys) with Celery. Write more documentation. If I have time, make experiments with different Engine parameters (distances, PCA, bit number, hash table number&#8230;&#8203;), as I can evaluate visually the results.</p>
 </div>
 </div>
         </section>
