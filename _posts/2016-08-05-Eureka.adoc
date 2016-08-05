@@ -1,0 +1,36 @@
+# Eureka!
+
+This week I finally made the new Engine work! As we are approaching the end of GSoC 2016, I am more and more concentrated in the project and even if I feel that NeuroVault is a mid-sized project that has many parts that still I don't understand, the whole thing starts to make sense for me. 
+
+Let me resume what I was doing this last week, because it was really a great bunch of things.
+
+I made through and migrated the whole Engine, making it work. Additions, super-fast indexes, super-fast similarity queries, changes and deletions of new maps are working as they should, and this makes me very happy :_) .
+
+But the best thing of this achievement is not that I made it, but *HOW* I made it. So, the thing was that I was working on migration, I made the insertions and building of the Engine, everything working fine... *but*, I arrived to the moment of implementing image changes and deletions and I realized that NearPy has no implemented method for such thing. It has a deletion of bucket method, but I needed the one for a single key and vector. image:https://kallinablog.files.wordpress.com/2016/02/shocked-emoji.png?w=462[fear, 50,50]
+
+Ok, don't panic, let's go to Project's repo... and found link:https://github.com/pixelogik/NearPy/issues/42[this issue]. 
+
+image:http://pixel.nymag.com/imgs/daily/following/2015/12/04/thinky.w560.h375.jpg[thinker, 80,100]
+
+Seems like many people was asking for this specific feature before (long time before). Do I have any other option? I really *need* this method to keep working.  
+
+¯\\_(ツ)_/¯  -> Me like ...   _Why not?_
+
+
+Ok, let's fork it and start working on it. In a hour and a half, the problem was solved for main memory implementation (not Redis Storage, dissapointingly). Not a big deal after all, just a iterations over all hashes and buckets looking for the specific key and deleting if so. I got requested to write some tests, and did so, with the big help of a developer. Problem solved! (partially) 
+
+Problem: The link:https://github.com/pixelogik/NearPy/pull/57[PR] is mergeable, but from NearPy they are asking for the Redis Storage version to be also implemented before merging. I said I could work on it, but after GSoC is finished, as I have plenty of work ahead. 
+
+Second Problem: It will be difficult to have the Redis Storage implemented for GSoC. 
+The reason is that due to constraints in how the Engine is built, could be that Redis storage it is not the best option for our project (I would need to study this more deeply with the mentor). Redis Storage allows to save the hashes in Redis, what forces to rebuild the engine everytime we need to save/delete a key. I would like to know if it is possible to perform these actions directly into Redis (without building the Engine), that would be perfect. Anyway, I will wait until the deletion method is implemented and then I will be able to test performance differences between Redis implementation and the actual one (saving/loading the Engine in memory).
+
+
+##### What else did you get done?
+
+I factored all the main migration actions to be consistent (still some work to do here). I built separate commands for build_engine() and dimensionality_reduction() in case it is needed to change it from time to time. I also started with the documentation work, that will be a big thing.
+
+##### What do you plan on doing next week?
+
+Finish and clean the migration PR. Write tests. Clean previous implementation's code not being used anymore. Control access to shared tasks (writing, deletion of keys) with Celery. Write more documentation.
+
+
