@@ -17,7 +17,7 @@ Seems like many people was asking for this specific feature before (long time be
 ¯\\_(ツ)_/¯  -> Me like ...   _Why not?_
 
 
-Ok, let's fork it and start working on it. In a hour and a half, the problem was solved for main memory implementation (not Redis Storage, dissapointingly). Not a big deal after all, just a iterations over all hashes and buckets looking for the specific key and deleting if so. I got requested to write some tests, and did so, with the big help of a developer. Problem solved! (partially) 
+Ok, let's fork it and start working on it. In a hour and a half, the problem was solved for main memory implementation (not Redis Storage, dissapointingly). Not a big deal after all, just some iterations over all hashes and buckets looking for the specific key and deleting if found. I got requested to write some tests, and did so, with the big help of a developer. Problem solved! (partially) 
 
 Problem: The link:https://github.com/pixelogik/NearPy/pull/57[PR] is mergeable, but from NearPy they are asking for the Redis Storage version to be also implemented before merging. I said I could work on it, but after GSoC is finished, as I have plenty of work ahead. 
 
