@@ -1,0 +1,18 @@
+# Farewell GSoC '16
+
+After passing the final evaluation and talking with my mentor, I took a long week of vacation (finally!) and now is time to sum up and close this excellent summer (of code). 
+
+Overall I think it has been a great project. From the project side, my opinion is that it was suitable for the period of time that GSoC lasts. It had a research part and an implementation part, which is a good combination not the get stucked in a single task and also tends to be less boring. About completeness, there are some pending minors, but I think that the main objectives are completed and the link:https://summerofcode.withgoogle.com/projects/#5796989929259008[code submission and documentation] is available. I will keep collaborating with NeuroVault and trying to finalize the migration of the Engine (which is actually finished, but we decided to be conservative and take time to test deeply all the functionality and response). Next stop, link:http://events.brainhack.org/vienna/[BrainHack Vienna] to link:http://events.brainhack.org/vienna/projects.html#neurovault_download[improve the download interface]. 
+
+Regarding to personal side, it was a great opportunity to learn about Python, Django, Docker… etc. Most importantly for me, to learn about NiPy, which hopefully it will be of great impact in my research, and get to know personally important people of the Neuroscience field (even if it was not due to GSoC, but I will put that inside “the experience”). If I had to mention some unpleasant side of GSoC, I would say that it was a bit hard to work for so many time and hours in the same project. Even if the motivation of completing the deliverables or GSoC itself sounds enough, days become too long (specially in summer) and too much focus on the same project can be exhausting. Anyway, I would say it was bittersweet, because this kind of experiences also are a good way of reinforcement and get used to work for long periods of time in the same project (which I was not very used).
+
+Last but not least, I would like to recognize and thank INCF and GSoC for their support and particularly Chris Gorgolewski for his kind guidance and mentoring. I am deeply grateful :)
+
+Agur!
+
+
+
+
+
+PS: For any kind of question related to GSoC or this specific project, contact me through GitHub. 
+
