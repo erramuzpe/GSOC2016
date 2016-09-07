@@ -4,7 +4,7 @@ Last week of coding, that was fast!
 
 This week I made a general cleaning, solving of last issues, testing and documenting. Basically, I finished and cleared the  migration PR. As I said last week, I wrote some tests, adapted other tests involving the migration (some unexpected issues arose, I will solve them ASAP). I cleaned the code and removed code not being used anymore. Corrected some functions to be more atomic and also solved accesses to shared tasks (such as writing and deletion of keys). I also wrote a 25 page document reporting what I have been doing during GSoC, with the intention of being also a guide/manual for future developers/students involved in NeuroVault. I will publish this Report next week, as we are still making corrections to it :)
 
-For next week I have only to prepare correctly the Final Submission and send it. I will also write a last entry in the blog summarizing this year's experience, which has been fantastic in many senses.  
+For next week I have only to prepare correctly the Final Submission and send it. I will also write a last entry in the blog summarizing this year's experience, which has been fantastic in many senses.
 
 
 
